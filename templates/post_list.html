@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Posts</h2>
+<form method="post">
+    {% csrf_token %}
+    <textarea name="content" placeholder="Write your post..." required></textarea>
+    <button type="submit">Post</button>
+</form>
+<h3>All Posts</h3>
+{% for post in posts %}
+    <p><strong>{{ post.author }}</strong>: {{ post.content }} ({{ post.created_at }})</p>
+{% endfor %}
+</body>
+</html>
