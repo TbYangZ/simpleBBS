@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>论坛-注册</title>
+</head>
+<body>
+<form method="post">
+    {% csrf_token %}
+    <ul>
+        <li><input type="text" name="username" placeholder="用户名" required></li>
+        <li><input type="password" name="password" placeholder="密码" required></li>
+        <li><input type="password" name="password_confirm" placeholder="确认密码" required></li>
+        <li><input type="email" name="email" placeholder="邮箱" required></li>
+    </ul>
+    <button type="submit">注册</button>
+    {% if messages %}
+        <ul class="error-messages">
+            {% for message in messages %}
+                <li><strong>错误：</strong>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p>已有账号？<a href="{% url 'login' %}">登录</a></p>
+</form>
+</body>
+</html>

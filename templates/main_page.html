@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>BBS</title>
+</head>
+<body>
+<h1>论坛</h1>
+<ul>
+    <li><a href="{% url 'main_page' %}">主页</a></li>
+    <li><a href="{% url 'public_chat' %}">公共聊天室</a></li>
+</ul>
+<ul>
+    <li><a href="#">登录</a></li>
+    <li><a href="#">注册</a></li>
+</ul>
+<h2>Posts</h2>
+<form method="post">
+    {% csrf_token %}
+    <ul>
+        <li><input type="text" name="name" placeholder="Enter your name" required></li>
+        <li><input type="text" name="email" placeholder="Enter your email" required></li>
+    </ul>
+    <textarea name="content" placeholder="Write your post..." required></textarea>
+    <button type="submit">Post</button>
+</form>
+<h3>All Posts</h3>
+{% for post in posts %}
+    <p><strong>{{ post.author }}</strong>: {{ post.content }} ({{ post.created_at }})</p>
+{% endfor %}
+</body>
+</html>

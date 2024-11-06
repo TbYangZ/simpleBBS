@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>论坛-登录</title>
+</head>
+<body>
+<h1>论坛</h1>
+<ul>
+    <li><a href="{% url 'post_list' %}">主页</a></li>
+    <li><a href="#">公共聊天室</a></li>
+</ul>
+<form method="post">
+    {% csrf_token %}
+    <ul>
+        <li><input type="text" name="username" placeholder="Enter your username" required></li>
+        <li><input type="password" name="password" placeholder="Enter your password" required></li>
+    </ul>
+    <button type="submit">登录</button>
+    {% if messages %}
+        <ul class="error-messages">
+            {% for message in messages %}
+                <li><strong>错误：</strong>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p>没有账号？<a href="{% url 'register' %}">注册</a></p>
+</form>
+</body>
+</html>

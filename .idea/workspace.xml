@@ -4,31 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="64c47aea-b5de-4416-a690-dc7076cf03b3" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/projectbbs.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/apps.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/migrations/0001_initial.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/migrations/0002_remove_post_auther_post_author.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/migrations/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmdb/views.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/projectbbs/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/projectbbs/asgi.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/projectbbs/settings.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/projectbbs/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/projectbbs/wsgi.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/post_list.html" afterDir="false" />
+    <list default="true" id="64c47aea-b5de-4416-a690-dc7076cf03b3" name="更改" comment="demo">
+      <change afterPath="$PROJECT_DIR$/templates/login_page.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/main_page.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/register_page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectbbs/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectbbs/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/post_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/post_list.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,15 +28,25 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="PerforceDirect.Settings">
-    <option name="CHARSET" value="无" />
-  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;TbYangZ&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/TbYangZ/simpleBBS.git&quot;,
+    &quot;accountId&quot;: &quot;9fbfd9d3-25a2-41e5-9486-5a2d68ed6285&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -76,7 +72,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "http.certificates",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -163,12 +159,40 @@
       <updated>1730302720075</updated>
       <workItem from="1730302724368" duration="189000" />
       <workItem from="1730302930625" duration="998000" />
-      <workItem from="1730343131908" duration="8010000" />
+      <workItem from="1730343131908" duration="8399000" />
+      <workItem from="1730376202575" duration="2015000" />
+      <workItem from="1730725514278" duration="1526000" />
+      <workItem from="1730774511206" duration="1703000" />
+      <workItem from="1730776391142" duration="10121000" />
     </task>
+    <task id="LOCAL-00001" summary="demo">
+      <option name="closed" value="true" />
+      <created>1730375960123</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730375960123</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="demo" />
+    <option name="LAST_COMMIT_MESSAGE" value="demo" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/projectbbs$manage.coverage" NAME="manage 覆盖结果" MODIFIED="1730303029103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
