@@ -8,16 +8,6 @@ from django.utils import timezone
 
 # Create your models here.
 
-class Post(models.Model):
-    id = models.AutoField(primary_key=True)
-    author = models.CharField(max_length=50, default='Anonymous')
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.author}: {self.content}"
-
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
@@ -76,3 +66,91 @@ class UserBackend(BaseBackend):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+
+
+class Post(models.Model):
+    id = models.AutoField(primary_key=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_auther')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    max_floor = models.IntegerField(default=1)
+    likes = models.IntegerField(default=0)
+
+    def get_author_name(self):
+        return User.objects.get(id=self.author_id).username
+
+    def __str__(self):
+        return f"{self.author_id}: {self.content}"
+
+
+class Review(models.Model):
+    id = models.AutoField(primary_key=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reply = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    likes = models.IntegerField(default=0)
+    floors = models.IntegerField(default=0)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user_id}: {self.content}"
+
+    def get_user_name(self):
+        return User.objects.get(id=self.user_id).username
+
+    def get_reply_id(self):
+        return Review.objects.filter(reply_id=self.id)
+
+    def get_likes(self):
+        return Review.objects.filter(likes=self.likes)
+
+
+class Messages(models.Model):
+    id = models.AutoField(primary_key=True)
+    sender_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
+    receiver_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
+    content = models.TextField()
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender_id}: {self.content}"
+
+
+class Follow(models.Model):
+    id = models.AutoField(primary_key=True)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
+    followee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followee')
+    follow_time = models.DateTimeField(auto_now_add=True)
+
+    def get_follower_name(self):
+        return User.objects.get(id=self.follower_id).username
+
+    def get_followee_name(self):
+        return User.objects.get(id=self.followee_id).username
+
+    def __str__(self):
+        return f"{self.follower_id}: {self.followee_id}"
+
+
+class Like(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='like_user')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='liked_post')
+    like_time = models.DateTimeField(auto_now_add=True)
+
+    def get_user_name(self):
+        return User.objects.get(id=self.user_id).username
+
+    def __str__(self):
+        return f"{self.get_user_name()}: {self.post_id}"
+
+
+class Blocks(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='block_user')
+    blocked_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_user')
+    block_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user_id}: {self.blocked_user}"

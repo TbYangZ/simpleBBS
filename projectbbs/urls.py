@@ -21,8 +21,9 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.post_list, name='post_list'),
+    path('', views.post_list, name='main_page'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('register/', views.register_view, name='register'),
+    path('post_detail/<int:post_id>/', views.post_detail, name='post_detail'),
 ]

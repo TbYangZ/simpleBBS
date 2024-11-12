@@ -26,19 +26,26 @@
         <li><a href="{% url 'logout' %}">登出</a></li>
     {% endif %}
 </ul>
-<h2>帖子</h2>
-<form method="post">
-    {% csrf_token %}
-    <textarea name="content" placeholder="Write your post..." required></textarea>
-    <button type="submit">Post</button>
-</form>
-<h3>All Posts</h3>
-{% for post, username in posts %}
-    <ul>
-        <li> <strong>{{ username }}</strong>: </li>
-        <li> <a href="{% url 'post_detail' post_id=post.id %}"> {{ post.content }}... </a> </li>
-        <li> {{ post.created_at }} </li>
-    </ul>
-{% endfor %}
+
+<ul>
+    <li>{{ author_name }}</li>
+    <li>{{ post.content }}</li>
+    <li>创建于：{{ post.created_at }}</li>
+</ul>
+<h2>评论</h2>
+<ul>
+    {% for review, review_username in reviews %}
+        <li>{{ review_username }}</li>
+        <li>{{ review.content }}</li>
+    {% endfor %}
+</ul>
+{% if user.is_authenticated %}
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="content" placeholder="Write your review..." required></textarea>
+        <button type="submit">提交评论</button>
+    </form>
+{% else %}
+{% endif %}
 </body>
 </html>

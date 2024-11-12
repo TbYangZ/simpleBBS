@@ -5,6 +5,11 @@
     <title>论坛-注册</title>
 </head>
 <body>
+<h1>论坛</h1>
+<ul>
+    <li><a href="{% url 'main_page' %}">主页</a></li>
+    <li><a href="#">公共聊天室</a></li>
+</ul>
 <form method="post">
     {% csrf_token %}
     <ul>
