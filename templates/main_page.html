@@ -29,10 +29,11 @@
 <h2>帖子</h2>
 <form method="post">
     {% csrf_token %}
-    <textarea name="content" placeholder="Write your post..." required></textarea>
-    <button type="submit">Post</button>
+    {% if user.is_authenticated %}
+        <textarea name="content" placeholder="Write your post..." required></textarea>
+        <button type="submit">Post</button>
+    {% endif %}
 </form>
-<h3>All Posts</h3>
 {% for post, username in posts %}
     <ul>
         <li> <strong>{{ username }}</strong>: </li>
