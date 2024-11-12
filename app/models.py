@@ -70,7 +70,7 @@ class UserBackend(BaseBackend):
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_auther')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_author')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     max_floor = models.IntegerField(default=1)

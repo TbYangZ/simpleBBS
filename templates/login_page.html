@@ -2,29 +2,129 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>论坛-登录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论坛 - 登录</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            padding: 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            width: 100%;
+            margin: 0;
+        }
+        /* 导航栏样式 */
+        nav {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: #3f51b5;
+            width: 100%;
+            justify-content: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        /* 登录表单样式 */
+        .login-form {
+            width: 300px;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #6200ea;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .login-form button:hover {
+            background-color: #3700b3;
+        }
+        .login-form p {
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .login-form a {
+            color: #6200ea;
+            text-decoration: none;
+        }
+        .login-form a:hover {
+            text-decoration: underline;
+        }
+        /* 错误信息样式 */
+        .error-messages {
+            width: 100%;
+            background-color: #ffebee;
+            color: #d32f2f;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            list-style: none;
+            margin: 0;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-<h1>论坛</h1>
-<ul>
-    <li><a href="{% url 'main_page' %}">主页</a></li>
-    <li><a href="#">公共聊天室</a></li>
-</ul>
-<form method="post">
-    {% csrf_token %}
-    <ul>
-        <li><input type="text" name="username" placeholder="Enter your username" required></li>
-        <li><input type="password" name="password" placeholder="Enter your password" required></li>
-    </ul>
-    <button type="submit">登录</button>
-    {% if messages %}
-        <ul class="error-messages">
-            {% for message in messages %}
-                <li><strong>错误：</strong>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    <p>没有账号？<a href="{% url 'register' %}">注册</a></p>
-</form>
+    <h1>论坛</h1>
+    <!-- 导航栏 -->
+    <nav>
+        <a href="{% url 'main_page' %}">主页</a>
+        <a href="#">公共聊天室</a>
+    </nav>
+
+    <!-- 登录表单 -->
+    <form method="post" class="login-form">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="用户名" required>
+        <input type="password" name="password" placeholder="密码" required>
+        <button type="submit">登录</button>
+
+        {% if messages %}
+            <ul class="error-messages">
+                {% for message in messages %}
+                    <li><strong>错误：</strong>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>没有账号？<a href="{% url 'register' %}">注册</a></p>
+    </form>
 </body>
 </html>

@@ -2,50 +2,150 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>论坛</title>
     <style>
-        a {
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            padding: 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            width: 100%;
+            margin: 0;
+        }
+        /* 导航栏样式 */
+        nav {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: #3f51b5;
+            width: 100%;
+            justify-content: center;
+        }
+        nav a {
+            color: #fff;
             text-decoration: none;
-            color: inherit;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        /* 用户状态样式 */
+        .user-info {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+        /* 帖子和评论样式 */
+        .post, .comments {
+            width: 90%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .post ul, .comments ul {
+            list-style: none;
+            padding: 0;
+        }
+        .post ul li, .comments ul li {
+            padding: 0.5rem 0;
+        }
+        .post ul li {
+            font-weight: bold;
+        }
+        .comments h2 {
+            margin-top: 0;
+        }
+        /* 评论表单样式 */
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .comment-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .comment-form button {
+            align-self: flex-end;
+            padding: 0.5rem 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .comment-form button:hover {
+            background-color: #3700b3;
         }
     </style>
 </head>
 <body>
-<h1>论坛</h1>
-<ul>
-    <li><a href="{% url 'main_page' %}">主页</a></li>
-    <li><a href="#">公共聊天室</a></li>
-</ul>
+    <h1>论坛</h1>
 
-<ul>
-    {% if not user.is_authenticated %}
-        <li><a href="{% url 'login' %}">登录</a></li>
-        <li><a href="{% url 'register' %}">注册</a></li>
-    {% else %}
-        <li>{{ user.username }}</li>
-        <li><a href="{% url 'logout' %}">登出</a></li>
+    <!-- 导航栏 -->
+    <nav>
+        <a href="{% url 'main_page' %}">主页</a>
+        <a href="#">公共聊天室</a>
+    </nav>
+
+    <!-- 用户信息 -->
+    <div class="user-info">
+        {% if not user.is_authenticated %}
+            <a href="{% url 'login' %}">登录</a>
+            <a href="{% url 'register' %}">注册</a>
+        {% else %}
+            <span>欢迎, {{ user.username }}</span>
+            <a href="{% url 'logout' %}">登出</a>
+        {% endif %}
+    </div>
+
+    <!-- 帖子内容 -->
+    <div class="post">
+        <ul>
+            <li>作者: {{ author_name }}</li>
+            <li>内容: {{ post.content }}</li>
+            <li>创建于: {{ post.created_at }}</li>
+        </ul>
+    </div>
+
+    <!-- 评论列表 -->
+    <div class="comments">
+        <h2>评论</h2>
+        <ul>
+            {% for review, review_username in reviews %}
+                <li><strong>{{ review_username }}</strong>: {{ review.content }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- 评论表单 -->
+    {% if user.is_authenticated %}
+        <form method="post" class="comment-form">
+            {% csrf_token %}
+            <textarea name="content" placeholder="写下你的评论..." required></textarea>
+            <button type="submit">提交评论</button>
+        </form>
     {% endif %}
-</ul>
-
-<ul>
-    <li>{{ author_name }}</li>
-    <li>{{ post.content }}</li>
-    <li>创建于：{{ post.created_at }}</li>
-</ul>
-<h2>评论</h2>
-<ul>
-    {% for review, review_username in reviews %}
-        <li>{{ review_username }}</li>
-        <li>{{ review.content }}</li>
-    {% endfor %}
-</ul>
-{% if user.is_authenticated %}
-    <form method="post">
-        {% csrf_token %}
-        <textarea name="content" placeholder="Write your review..." required></textarea>
-        <button type="submit">提交评论</button>
-    </form>
-{% else %}
-{% endif %}
 </body>
 </html>
