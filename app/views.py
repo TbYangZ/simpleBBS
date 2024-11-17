@@ -3,10 +3,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 
 from app.models import Post, UserBackend, Review, Follow, Messages, Blocks
 from app.models import User
-
+import markdown
+from app.forms import PostForm
 
 # Create your views here.
 
@@ -55,19 +58,35 @@ def register_view(request):
         email = request.POST['email']
         password = request.POST['password']
         password_confirm = request.POST['password_confirm']
+
+        # 验证逻辑
         if User.objects.filter(username=username).exists():
-            messages.error(request, '用户名已存在')
+            messages.error(request, '用户名已存在，请选择其他用户名')
+        elif User.objects.filter(email=email).exists():
+            messages.error(request, '邮箱已被注册，请使用其他邮箱')
         elif password != password_confirm:
-            messages.error(request, '两次密码不一致')
+            messages.error(request, '两次输入的密码不一致')
         else:
-            user = User.objects.create_user(username=username, email=email, password=password)
-            login(request, user)
-            return redirect('main_page')
+            # 注册用户
+            try:
+                user = User.objects.create_user(username=username, email=email, password=password)
+                login(request, user)  # 自动登录
+                messages.success(request, '注册成功，欢迎您！')
+                return redirect('main_page')
+            except Exception as e:
+                # 捕获意外错误并提示
+                messages.error(request, f'注册失败，请稍后重试: {str(e)}')
+
+    # 如果是 GET 请求或者验证失败，渲染注册页面
     return render(request, 'register_page.html')
+
 
 
 def post_detail(request, post_id):
     post = Post.objects.get(id=post_id)
+
+    post.content = markdown.markdown(post.content)  # 将Markdown转换为HTML
+
     if request.method == 'POST':
         content = request.POST['content']
         Review.objects.create(post=post, user=request.user, content=content)
@@ -92,7 +111,28 @@ def user_main_page(request, user_id):
 
     posts = Post.objects.filter(author=user)
 
-    return render(request, 'user_main_page.html', {'user': user, 'posts': posts})
+    # 将每个帖子和对应的用户名打包成元组
+    posts_with_username = [(post, post.author.username) for post in posts]
+
+    followers_count = Follow.objects.filter(followee=user).count()
+    followees_count = Follow.objects.filter(follower=user).count()
+
+    is_following = Follow.objects.filter(follower=current_user, followee=user).exists()
+
+    following_users = Follow.objects.filter(follower=user)
+    following_usernames = [follow.followee for follow in following_users]
+    followers_users = Follow.objects.filter(followee=user)
+    followers_usernames = [follow.follower for follow in followers_users]
+
+    return render(request, 'user_main_page.html', {
+        'user': user,  # 目标用户
+        'posts': posts_with_username,  # 帖子列表和用户名的元组
+        'followers_count': followers_count,  # 粉丝数
+        'followees_count': followees_count,  # 关注数
+        'is_following': is_following,  # 当前用户是否关注目标用户
+        'following_usernames': following_usernames,  # 当前用户关注的用户
+        'followers_usernames': followers_usernames,  # 当前用户的粉丝
+    })
 
 
 def follower_page(request, user_id):
@@ -105,3 +145,62 @@ def message_page(request):
     user = request.user
     private_messages = Messages.objects.filter(receiver_id=user.id)
     return render(request, 'message_page.html', {'user': user, 'messages': private_messages})
+
+@login_required
+def follow_user(request, user_id):
+    followee = get_object_or_404(User, id=user_id)
+    follower = request.user
+
+    # 检查是否试图关注自己
+    if follower == followee:
+        messages.error(request, "你不能关注自己！")
+        return redirect('user_main_page', user_id=user_id)
+
+    # 如果没有关注过该用户，则创建关注关系
+    if not Follow.objects.filter(follower=follower, followee=followee).exists():
+        Follow.objects.create(follower=follower, followee=followee)
+        messages.success(request, f"你已成功关注 {followee.username}")
+
+    return redirect('user_main_page', user_id=user_id)
+
+
+@login_required
+def unfollow_user(request, user_id):
+    followee = get_object_or_404(User, id=user_id)
+    follower = request.user
+
+    Follow.objects.filter(follower=follower, followee=followee).delete()
+
+    return redirect('user_main_page', user_id=user_id)
+
+@login_required  # 确保用户已登录
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    # 检查是否是帖子作者或者管理员
+    if post.author != request.user and not request.user.is_staff:
+        return redirect('post_detail', post_id=post.id)  # 如果不是作者或管理员，跳转回帖子详情页面
+
+    if request.method == 'POST':
+        post.delete()  # 删除帖子
+        return redirect('main_page')  # 删除后跳转到主页（或其他你需要跳转的页面）
+
+    return render(request, 'confirm_delete.html', {'post': post})
+
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    # 确保只有帖子作者或管理员能修改帖子
+    if post.author != request.user and not request.user.is_staff:
+        return redirect('post_detail', post_id=post.id)  # 如果不是作者或管理员，跳转回帖子详情页面
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()  # 保存修改后的帖子
+            return redirect('post_detail', post_id=post.id)  # 修改后跳转到帖子详情页面
+    else:
+        form = PostForm(instance=post)  # 在GET请求时，加载当前帖子的内容到表单
+
+    return render(request, 'edit_post.html', {'form': form, 'post': post})

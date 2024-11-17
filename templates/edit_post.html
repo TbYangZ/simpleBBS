@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改帖子</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 0.5rem;
+            box-sizing: border-box;
+            background-color: #fafafa;
+        }
+
+        button {
+            background-color: #6200ea;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+        }
+
+        .cancel-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .cancel-link a {
+            color: #6200ea;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .cancel-link a:hover {
+            color: #3700b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>修改帖子</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- 使用循环生成表单字段并加样式 -->
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+
+            <button type="submit">保存修改</button>
+        </form>
+
+        <div class="cancel-link">
+            <a href="{% url 'post_detail' post.id %}">取消</a>
+        </div>
+    </div>
+</body>
+</html>

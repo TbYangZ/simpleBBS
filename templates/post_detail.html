@@ -16,6 +16,7 @@
             flex-direction: column;
             align-items: center;
         }
+
         h1 {
             text-align: center;
             padding: 1rem;
@@ -24,6 +25,7 @@
             width: 100%;
             margin: 0;
         }
+
         /* 导航栏样式 */
         nav {
             display: flex;
@@ -33,14 +35,17 @@
             width: 100%;
             justify-content: center;
         }
+
         nav a {
             color: #fff;
             text-decoration: none;
             font-weight: bold;
         }
+
         nav a:hover {
             text-decoration: underline;
         }
+
         /* 用户状态样式 */
         .user-info {
             display: flex;
@@ -49,6 +54,7 @@
             margin: 1rem 0;
             font-size: 1.1rem;
         }
+
         /* 帖子和评论样式 */
         .post, .comments {
             width: 90%;
@@ -59,19 +65,24 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
+
         .post ul, .comments ul {
             list-style: none;
             padding: 0;
         }
+
         .post ul li, .comments ul li {
             padding: 0.5rem 0;
         }
+
         .post ul li {
             font-weight: bold;
         }
+
         .comments h2 {
             margin-top: 0;
         }
+
         /* 评论表单样式 */
         .comment-form {
             display: flex;
@@ -79,6 +90,7 @@
             gap: 0.5rem;
             margin-top: 1rem;
         }
+
         .comment-form textarea {
             width: 100%;
             padding: 0.8rem;
@@ -86,6 +98,7 @@
             border-radius: 4px;
             resize: vertical;
         }
+
         .comment-form button {
             align-self: flex-end;
             padding: 0.5rem 1rem;
@@ -95,8 +108,40 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         .comment-form button:hover {
             background-color: #3700b3;
+        }
+
+        /* 登出按钮样式 */
+        .logout-button {
+            background-color: #1f1e33; /* 按钮颜色 */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .logout-button:hover {
+            background-color: #e64a19; /* 悬停时的颜色 */
+        }
+
+        .logout-button svg {
+            margin-right: 8px;
+        }
+
+        /* 小图标 */
+        .logout-button:focus {
+            outline: none;
+        }
+
+        .logout-button:active {
+            background-color: #d84315; /* 按下时的颜色 */
         }
     </style>
 </head>
@@ -116,25 +161,44 @@
             <a href="{% url 'register' %}">注册</a>
         {% else %}
             <span>欢迎, {{ user.username }}</span>
-            <a href="{% url 'logout' %}">登出</a>
+            <a href="{% url 'logout' %}" class="logout-button">
+                <!-- 可加入图标 -->
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 96 960 960" width="16"><path d="M468 936V684h300V504H468V288l-204 204 204 204z"></path></svg>
+                登出
+            </a>
         {% endif %}
     </div>
 
     <!-- 帖子内容 -->
     <div class="post">
         <ul>
-            <li>作者: {{ author_name }}</li>
-            <li>内容: {{ post.content }}</li>
-            <li>创建于: {{ post.created_at }}</li>
+            <!-- 为作者添加链接，点击后跳转到该作者的主页 -->
+            <li>作者: <a href="{% url 'user_main_page' post.author.id %}">{{ post.author.username }}</a></li>
+            <li>内容: <div class="post-content">{{ post.content|safe }}</div></li> <!-- 使用 safe 来渲染 HTML -->
+            <li>创建于: {{ post.created_at|date:"Y-m-d H:i" }}</li>
         </ul>
     </div>
+
+    {% if user == post.author or user.is_staff %}
+        <a href="{% url 'edit_post' post.id %}">
+            <button>修改帖子</button>
+        </a>
+    {% endif %}
+
+    {% if user == post.author or user.is_staff %}
+        <a href="{% url 'delete_post' post.id %}">
+            <button>删除帖子</button>
+        </a>
+    {% endif %}
 
     <!-- 评论列表 -->
     <div class="comments">
         <h2>评论</h2>
         <ul>
             {% for review, review_username in reviews %}
-                <li><strong>{{ review_username }}</strong>: {{ review.content }}</li>
+                <li>
+                    <strong><a href="{% url 'user_main_page' review.id %}">{{ review_username }}</a></strong>: {{ review.content }}
+                </li>
             {% endfor %}
         </ul>
     </div>
