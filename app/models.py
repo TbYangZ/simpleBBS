@@ -52,6 +52,9 @@ class User(models.Model):
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
 
+    def is_in_server(self, server):
+        return ServerUser.objects.filter(server_id=server.id, user_id=self.id).exists()
+
 
 class UserBackend(BaseBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
@@ -155,3 +158,162 @@ class Blocks(models.Model):
 
     def __str__(self):
         return f"{self.user_id}: {self.blocked_user}"
+
+
+class Server(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='server_owner')
+    status = models.BooleanField(default=True)
+    secret = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_owner_name(self):
+        return User.objects.get(id=self.owner_id).username
+
+    def __str__(self):
+        return self.name
+
+
+class Channel(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+    server = models.ForeignKey(Server, on_delete=models.CASCADE, related_name='channel_server')
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_server_name(self):
+        return Server.objects.get(id=self.server_id).name
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class ServerChannel(models.Model):
+    id = models.AutoField(primary_key=True)
+    server = models.ForeignKey(Server, on_delete=models.CASCADE, related_name='server')
+    channel = models.ForeignKey(Channel, on_delete=models.CASCADE, related_name='server_channel')
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.server.name}: {self.name}"
+
+
+class ServerUser(models.Model):
+    id = models.AutoField(primary_key=True)
+    server = models.ForeignKey(Server, on_delete=models.CASCADE, related_name='user_server')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='server_user')
+    join_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.server.name}: {self.user}"
+
+
+class ServerBlock(models.Model):
+    id = models.AutoField(primary_key=True)
+    server = models.ForeignKey(Server, on_delete=models.CASCADE, related_name='block_server')
+    blocked_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='server_blocked_user')
+    block_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.server.name}: {self.blocked_user}"
+
+
+class ChannelMessage(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel = models.ForeignKey(Channel, on_delete=models.CASCADE, related_name='channel_message')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='channel_message_user')
+    content = models.TextField()
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.channel.name}: {self.user.username}"
+
+
+class SystemMessage(models.Model):
+    TEXT = 'text'
+    CHOICE = 'choice'
+    MESSAGE_TYPE_CHOICE = [
+        (TEXT, 'text'),
+        (CHOICE, 'choice'),
+    ]
+
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='system_message_user')
+    content = models.TextField()
+    message_type = models.CharField(max_length=50, choices=MESSAGE_TYPE_CHOICE, default=TEXT)
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.content}"
+
+
+def create_server(server_name, owner, is_secret=False):
+    server = Server.objects.create(name=server_name, owner=owner, secret=is_secret)
+    ServerUser.objects.create(server=server, user=owner)
+    default_channel = Channel.objects.create(name='general', server=server)
+    ServerChannel.objects.create(server=server, channel=default_channel)
+    return server
+
+
+def create_channel(channel_name, server, current_user):
+    if not server.owner_id == current_user.id:
+        raise ValueError("You are not the owner of this server.")
+    channel = Channel.objects.create(name=channel_name, server=server)
+    ServerChannel.objects.create(server=server, channel=channel)
+    return channel
+
+
+SUCCESS = 0
+ERROR_ALREADY_IN_SERVER = -1
+ERROR_BLOCKED_BY_SERVER_OWNER = -2
+ERROR_SECRET_SERVER = -3
+
+
+def join_server(server_id, user):
+    server = Server.objects.get(id=server_id)
+    if ServerUser.objects.filter(server_id=server.id, user_id=user.id).exists():
+        return ERROR_ALREADY_IN_SERVER, "You have already joined this server."
+    if ServerBlock.objects.filter(server_id=server.id, blocked_user_id=user.id).exists():
+        return ERROR_BLOCKED_BY_SERVER_OWNER, "You are blocked from this server."
+    if server.secret:
+        return ERROR_SECRET_SERVER, "This server is secret."
+    ServerUser.objects.create(server=server, user=user)
+    return SUCCESS, "Join server successfully."
+
+
+def get_message_from_channel(channel):
+    return ChannelMessage.objects.filter(channel_id=channel.id)
+
+
+def get_channels_from_server(server):
+    query_set = ServerChannel.objects.filter(server_id=server.id)
+    channel_list = []
+    for server_channel in query_set:
+        channel_list.append(Channel.objects.get(id=server_channel.channel_id))
+    return channel_list
+
+
+def send_system_message(user, content):
+    SystemMessage.objects.create(user=user, content=content)
+
+
+def get_server_list(user):
+    query_set = ServerUser.objects.filter(user_id=user.id)
+    server_list = []
+    for server_user in query_set:
+        server_list.append(Server.objects.get(id=server_user.server_id))
+    return server_list
+
+
+def get_channel_history(channel):
+    query_set = ChannelMessage.objects.filter(channel_id=channel.id)
+    history = []
+    for message in query_set:
+        history.append({
+            'user_name': User.objects.get(id=message.user_id).username,
+            'content': message.content,
+            'time': message.time.strftime('%Y-%m-%d %H:%M:%S'),
+        })
+    return history

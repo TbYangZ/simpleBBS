@@ -149,7 +149,7 @@
     <nav>
         <ul>
             <li><a href="{% url 'main_page' %}">主页</a></li>
-            <li><a href="#">公共聊天室</a></li>
+            <li><a href="{% url 'public_chat_room' %}">公共聊天室</a></li>
         </ul>
         <ul>
             {% if user.is_authenticated %}
@@ -193,7 +193,7 @@
             {% endfor %}
         </div>
     {% endif %}
-
+    {% block posts %}
     <!-- 帖子列表 -->
     <div class="post-list">
         <h2 style="text-align: center;">帖子列表</h2>
@@ -214,6 +214,7 @@
             </div>
         {% endfor %}
     </div>
+    {% endblock %}
 
 </body>
 </html>
