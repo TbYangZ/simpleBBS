@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收件箱</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #6200ea;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* 收件箱样式 */
+        .inbox-container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* 邮件列表样式 */
+        .inbox-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .inbox-list li {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .inbox-list li:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-5px);
+        }
+
+        .inbox-list li a {
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #6200ea;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .inbox-list li span {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        /* 空收件箱提示样式 */
+        .no-messages {
+            font-size: 1.2rem;
+            color: #888;
+            padding: 1rem;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        /* 返回主页按钮样式 */
+        .back-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #6200ea;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #3700b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>收件箱</h1>
+
+    <div class="inbox-container">
+        {% if messages %}
+            <ul class="inbox-list">
+                {% for message in messages %}
+                    <li>
+                        <a href="{% url 'message_detail' message.id %}">
+                            {{ message.sender.username }}: {{ message.content|truncatechars:30 }}
+                        </a>
+                        <span>{{ message.time }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-messages">您的收件箱为空。</div>
+        {% endif %}
+
+        <!-- 返回主页按钮 -->
+        <a href="{% url 'main_page' %}" class="back-button">返回主页</a>
+    </div>
+</body>
+</html>

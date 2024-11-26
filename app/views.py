@@ -8,8 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from app.models import *
 import markdown
-from app.forms import PostForm
-
+from app.forms import PostForm, MessageForm
 
 # Create your views here.
 
@@ -79,6 +78,7 @@ def register_view(request):
 
     # 如果是 GET 请求或者验证失败，渲染注册页面
     return render(request, 'register_page.html')
+
 
 
 def post_detail(request, post_id):
@@ -270,3 +270,29 @@ def channel(request, server_id, channel_id):
     }
     return render(request, 'channel.html', context)
 
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.save()
+            return redirect('inbox')
+    else:
+        form = MessageForm()  # 为 GET 请求初始化表单
+    return render(request, 'send_message.html', {'form': form})
+
+
+@login_required
+def inbox(request):
+    messages = Messages.objects.filter(receiver=request.user).order_by('-time')
+    return render(request, 'inbox.html', {'messages': messages})
+
+
+@login_required
+def message_detail(request, message_id):
+    message = get_object_or_404(Messages, id=message_id, receiver=request.user)
+    rendered_content = markdown.markdown(message.content)
+    return render(request, 'message_detail.html', {'message': message, 'rendered_content': rendered_content})

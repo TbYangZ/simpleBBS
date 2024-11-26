@@ -143,6 +143,59 @@
         .logout-button:active {
             background-color: #d84315; /* 按下时的颜色 */
         }
+
+        /* 帖子操作按钮容器 */
+        .post-actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* 通用按钮样式 */
+        .action-button {
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 修改按钮 */
+        .action-button.edit {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+        }
+
+        .action-button.edit:hover {
+            background-color: #388e3c;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 删除按钮 */
+        .action-button.delete {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+        }
+
+        .action-button.delete:hover {
+            background-color: #d32f2f;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 添加按钮按下时的效果 */
+        .action-button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -179,17 +232,18 @@
         </ul>
     </div>
 
-    {% if user == post.author or user.is_staff %}
-        <a href="{% url 'edit_post' post.id %}">
-            <button>修改帖子</button>
-        </a>
-    {% endif %}
-
-    {% if user == post.author or user.is_staff %}
-        <a href="{% url 'delete_post' post.id %}">
-            <button>删除帖子</button>
-        </a>
-    {% endif %}
+    <div class="post-actions">
+        {% if user == post.author or user.is_staff %}
+            <a href="{% url 'edit_post' post.id %}" class="action-button edit">
+                修改帖子
+            </a>
+        {% endif %}
+        {% if user == post.author or user.is_staff %}
+            <a href="{% url 'delete_post' post.id %}" class="action-button delete">
+                删除帖子
+            </a>
+        {% endif %}
+    </div>
 
     <!-- 评论列表 -->
     <div class="comments">

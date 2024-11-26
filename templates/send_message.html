@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发送私信</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #6200ea;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* 表单容器样式 */
+        .message-form-container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        /* 表单样式 */
+        .message-form-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message-form-container form label {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .message-form-container form input,
+        .message-form-container form textarea,
+        .message-form-container form select {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
+        }
+
+        .message-form-container form input:focus,
+        .message-form-container form textarea:focus,
+        .message-form-container form select:focus {
+            border-color: #6200ea;
+            outline: none;
+        }
+
+        .message-form-container form button {
+            padding: 0.8rem 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .message-form-container form button:hover {
+            background-color: #3700b3;
+        }
+
+        /* 返回主页按钮样式 */
+        .back-button {
+            margin-top: 1rem;
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #ccc;
+            color: #333;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #bbb;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            .message-form-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>发送私信</h1>
+    <div class="message-form-container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">发送</button>
+        </form>
+    </div>
+
+    <!-- 返回主页按钮 -->
+    <a href="{% url 'main_page' %}" class="back-button">返回主页</a>
+</body>
+</html>
