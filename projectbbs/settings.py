@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'channels',
     'app',
 ]
 
@@ -70,6 +70,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'projectbbs.wsgi.application'
 
+ASGI_APPLICATION = 'projectbbs.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [("127.0.0.1", 6379)],
+            # "hosts": '127.0.0.1',
+            # "port": 6379,
+        }
+    }
+}
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -78,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'projectbbs',
         'USER': 'root',
-        'PASSWORD': 'nanami?114:514',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '3306',
     }

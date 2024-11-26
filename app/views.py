@@ -6,10 +6,10 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 
-from app.models import Post, UserBackend, Review, Follow, Messages, Blocks
-from app.models import User
+from app.models import *
 import markdown
 from app.forms import PostForm
+
 
 # Create your views here.
 
@@ -81,7 +81,6 @@ def register_view(request):
     return render(request, 'register_page.html')
 
 
-
 def post_detail(request, post_id):
     post = Post.objects.get(id=post_id)
 
@@ -146,6 +145,7 @@ def message_page(request):
     private_messages = Messages.objects.filter(receiver_id=user.id)
     return render(request, 'message_page.html', {'user': user, 'messages': private_messages})
 
+
 @login_required
 def follow_user(request, user_id):
     followee = get_object_or_404(User, id=user_id)
@@ -173,7 +173,9 @@ def unfollow_user(request, user_id):
 
     return redirect('user_main_page', user_id=user_id)
 
-@login_required  # 确保用户已登录
+
+# 确保用户已登录
+@login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
@@ -186,6 +188,7 @@ def delete_post(request, post_id):
         return redirect('main_page')  # 删除后跳转到主页（或其他你需要跳转的页面）
 
     return render(request, 'confirm_delete.html', {'post': post})
+
 
 @login_required
 def edit_post(request, post_id):
@@ -204,3 +207,66 @@ def edit_post(request, post_id):
         form = PostForm(instance=post)  # 在GET请求时，加载当前帖子的内容到表单
 
     return render(request, 'edit_post.html', {'form': form, 'post': post})
+
+
+@login_required
+def public_chat_room(request):
+    # create a server or join a server
+    user = request.user
+    context = {}
+    if request.method == 'POST':
+        type_of_post = request.POST.get('type')
+        if type_of_post == 'create_server':
+            # create a server
+            name = request.POST.get('name')
+            server = create_server(server_name=name, owner=user)
+            return redirect('public_chat_room')
+        else:
+            # join a server
+            server_id = request.POST.get('addr')
+            err, msg = join_server(server_id, user)
+            if err == ERROR_SECRET_SERVER:
+                messages.error(request, "This is a secret server, you need a password to join")
+            elif err == ERROR_ALREADY_IN_SERVER:
+                messages.error(request, "You are already in this server")
+            elif err == ERROR_BLOCKED_BY_SERVER_OWNER:
+                messages.error(request, "You are blocked by the server owner")
+            elif err == SUCCESS:
+                pass
+            return redirect('public_chat_room')
+
+    context['server_list'] = get_server_list(user=user)
+    return render(request, 'public_chat_room.html', context=context)
+
+
+@login_required
+def public_chat_room_in_server(request, server_id):
+    if request.method == 'POST':
+        pass
+    user = request.user
+    context = {}
+    server = Server.objects.get(id=server_id)
+    context['server'] = server
+    context['channel_list'] = get_channels_from_server(server)
+    context['server_list'] = get_server_list(user=user)
+    return render(request, 'server.html', context)
+
+
+@login_required
+def channel(request, server_id, channel_id):
+    if request.method == 'POST':
+        pass
+    user = request.user
+    server = Server.objects.get(id=server_id)
+    channel = Channel.objects.get(id=channel_id)
+    history = get_channel_history(channel)
+    context = {
+        'server': server,
+        'user': user,
+        'channel': channel,
+        'channel_list': get_channels_from_server(server=server),
+        'server_list': get_server_list(user=user),
+        'history': history
+    }
+    return render(request, 'channel.html', context)
+

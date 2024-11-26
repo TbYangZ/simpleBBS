@@ -1,0 +1,424 @@
+{% extends 'main_page.html' %}
+
+{% block style %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            padding: 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            margin: 0;
+            height: 50px;
+        }
+        /* 导航栏样式 */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            background-color: #3f51b5;
+            height: 50px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        /* 帖子表单样式 */
+        .post-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 500px;
+            margin: 1rem auto;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .post-form textarea {
+            width: 100%;
+            height: 100px;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .post-form button {
+            align-self: flex-end;
+            padding: 0.5rem 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .post-form button:hover {
+            background-color: #3700b3;
+        }
+
+        /* 帖子列表样式 */
+        .post-list {
+            max-width: 800px;
+            margin: 1rem auto;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .post-item {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .post-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .post-item h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #6200ea;
+        }
+        .post-item h3 a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .post-item h3 a:hover {
+            text-decoration: underline;
+        }
+        .post-item p {
+            margin: 0.5rem 0 0;
+            font-weight: bold;
+            color: #333;
+        }
+        .post-item span {
+            font-size: 0.9rem;
+            color: #888;
+        }
+        /*消息样式*/
+        .messages {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        .main-canvas {
+            display: flex;
+            height: calc(100% - 100px - 3rem);
+            /*flex-direction: column;*/
+            /*gap: 10px;*/
+        }
+
+        .sidebar {
+            width: 170px;
+            background-color: #3700b3;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 10px 5px 10px 5px;
+            overflow-y: auto;
+        }
+
+        .tab-btn {
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .tab-btn:hover {
+            background-color: #34495e;
+        }
+
+        /* 隐藏和显示内容面板 */
+        .channel-view {
+            background-color: #15528e;
+            display: block;
+            width: 200px;
+            text-align: left;
+            font-size: 18px;
+            padding: 20px 5px 20px 5px;
+            overflow-y: auto;
+        }
+
+        .channel-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            text-align: left;
+            width: 150px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .channel-button:hover {
+            background-color: #34495e;
+        }
+
+        /* 中间内容区域 */
+        .main-content {
+            {#flex-grow: 1;#}
+            {#padding: 20px;#}
+            {#background-color: #ecf0f1;#}
+            {#overflow-y: auto;#}
+            {#display: flex;#}
+            {#justify-content: center;#}
+            {#align-items: center;#}
+            width: 100%;
+        }
+        .chat-message-input {
+            width: calc(100% - 75px - 70px);
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #000000;
+            border-radius: 4px;
+            margin: 3px;
+        }
+        .chat-message-button {
+            width: 70px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #000000;
+            border-radius: 4px;
+            margin: 3px;
+            cursor: pointer;
+        }
+        .chat-log {
+            width: calc(100% - 75px);
+            height: calc(100% - 100px - 3rem - 100px);
+            padding: 10px;
+            border: 1px solid #fbfbfb;
+            border-radius: 4px;
+            margin: 3px;
+            overflow-y: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="main-canvas">
+    <div class="sidebar">
+
+    <h2 style="color: #ecf0f1">服务器列表</h2>
+
+    <div class="server-list">
+        {% for server in server_list %}
+            <button class="tab-btn" onclick="window.location.href='{% url "public_chat_room_in_server" server_id=server.id %}';">{{ server.name }}</button>
+        {% endfor %}
+    </div>
+
+    <button class="tab-btn" id="createServer">创建你的服务器</button>
+
+    <div class="modal" id="formCreateServer">
+        <h2>服务器的信息</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="create_server">
+            <label style="color: black" for="name">服务器的名字</label>
+            <input type="text" id="name" name="name" required><br><br>
+            <button type="submit">创建！</button>
+            <button type="button" id="cancelCreate">取消</button>
+        </form>
+    </div>
+
+    <button class="tab-btn" id="joinServer">加入服务器</button>
+    <div class="modal" id="formJoinServer">
+        <h2>服务器信息</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="join_server">
+            <label style="color: black" for="name">服务器的地址</label>
+            <input type="text" id="name" name="addr" required><br><br>
+            <button type="submit">加入！</button>
+            <button type="button" id="cancelJoin">取消</button>
+        </form>
+    </div>
+
+    </div>
+
+    <div class="channel-view">
+    <h3 style="color: #ecf0f1">频道列表</h3>
+    {% for channel in channel_list %}
+        <button class="channel-button" onclick="window.location.href='{% url "channel" server_id=server.id channel_id=channel.id %}';">{{ channel.name }}</button>
+    {% endfor %}
+    </div>
+    <div class="main-content">
+        {% if server %}
+            <div class="chat-log" id="chat-log">
+            {% for message in history %}
+                <p><strong>{{ message.user_name }}: </strong>{{ message.content }} <br> on {{ message.time }}</p>
+            {% endfor %}
+            </div>
+            <br><br>
+            <input class="chat-message-input" id="chat-message-input" type="text" size="100">
+            <button class="chat-message-button" id="chat-message-button">Send</button>
+
+            <script>
+                function scrollToBottom() {
+                    const chatLog = document.querySelector('#chat-log');
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                }
+
+                // 页面加载时滚动到底部
+                window.onload = function () {
+                    scrollToBottom();
+                };
+                const server_id = {{ server.id }};
+                const channel_id = {{ channel.id }};
+                const user_id = {{ user.id }};
+                const chatSocket = new WebSocket(
+                    `ws://${window.location.host}/ws/chat_room/${server_id}/${channel_id}/${user_id}/`
+                );
+
+                message_template = function(message) {
+                    return `<p><strong>${message.user_name}: </strong>${message.message} <br> on ${ message.time }</p>`;
+                }
+
+                chatSocket.onmessage = function(e) {
+                    const data = JSON.parse(e.data);
+                    document.querySelector('#chat-log').innerHTML += message_template(data);
+                    scrollToBottom();
+                };
+
+                chatSocket.onclose = function(e) {
+                    console.error('Chat socket closed unexpectedly');
+                };
+
+                document.querySelector('#chat-message-button').focus();
+                document.querySelector('#chat-message-button').onkeyup = function(e) {
+                    if (e.keyCode === 13) {  // 按下 Enter 键
+                        document.querySelector('#chat-message-button').click();
+                    }
+                };
+
+                document.querySelector('#chat-message-button').onclick = function(e) {
+                    const messageInput = document.querySelector('#chat-message-input');
+                    const message = messageInput.value;
+                    chatSocket.send(JSON.stringify({
+                        'message': message,
+                        'user_id': user_id
+                    }));
+                    messageInput.value = '';
+                };
+            </script>
+        {% else %}
+            <div class="body">
+                <p>创建一个聊天室或者加入一个聊天室！</p>
+            </div>
+        {% endif %}
+    </div>
+    </div>
+
+
+    <script>
+    // 获取按钮和表单
+    const createServer = document.getElementById('createServer');
+    const formCreateServer = document.getElementById('formCreateServer');
+    const cancelCreate = document.getElementById('cancelCreate');
+
+
+    const joinServer = document.getElementById('joinServer');
+    const formJoinServer = document.getElementById('formJoinServer');
+    const cancelJoin = document.getElementById('cancelJoin');
+
+    joinServer.addEventListener('click', function() {
+        formCreateServer.style.display = 'none';
+        formJoinServer.style.display = 'block';
+    });
+
+    cancelJoin.addEventListener('click', function() {
+        formJoinServer.style.display = 'none';
+    });
+
+
+    // 点击按钮显示表单
+    createServer.addEventListener('click', function() {
+        formJoinServer.style.display = 'none'; // 隐藏表单
+        formCreateServer.style.display = 'block'; // 显示表单
+    });
+
+    // 点击关闭按钮隐藏表单
+    cancelCreate.addEventListener('click', function() {
+        formCreateServer.style.display = 'none'; // 隐藏表单
+    });
+
+    const server_list = document.getElementById('server_list');
+    </script>
+{% endblock %}
+
+{% block post_form %}
+{% endblock %}
+
+
+{% block posts %}
+{% endblock %}
