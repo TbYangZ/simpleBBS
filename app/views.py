@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from app.models import Post, UserBackend, Review, Follow, Messages, Blocks
 from app.models import User
 import markdown
-from app.forms import PostForm
+from app.forms import PostForm, MessageForm
 
 # Create your views here.
 
@@ -204,3 +204,27 @@ def edit_post(request, post_id):
         form = PostForm(instance=post)  # 在GET请求时，加载当前帖子的内容到表单
 
     return render(request, 'edit_post.html', {'form': form, 'post': post})
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.save()
+            return redirect('inbox')
+    else:
+        form = MessageForm()  # 为 GET 请求初始化表单
+    return render(request, 'send_message.html', {'form': form})
+
+@login_required
+def inbox(request):
+    messages = Messages.objects.filter(receiver=request.user).order_by('-time')
+    return render(request, 'inbox.html', {'messages': messages})
+
+@login_required
+def message_detail(request, message_id):
+    message = get_object_or_404(Messages, id=message_id, receiver=request.user)
+    rendered_content = markdown.markdown(message.content)
+    return render(request, 'message_detail.html', {'message': message, 'rendered_content': rendered_content})

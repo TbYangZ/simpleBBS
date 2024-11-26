@@ -385,6 +385,8 @@
     </ul>
     <ul class="nav-list">
         {% if user.is_authenticated %}
+            <li><a href="{% url 'inbox' %}">收件箱</a></li>
+            <li><a href="{% url 'send_message' %}">发送私信</a></li>
             <li><a href="{% url 'logout' %}">登出</a></li>
         {% else %}
             <li><a href="{% url 'login' %}">登录</a></li>

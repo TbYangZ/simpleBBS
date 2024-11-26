@@ -1,3 +1,4 @@
+import markdown
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password, check_password
@@ -108,13 +109,13 @@ class Review(models.Model):
 
 class Messages(models.Model):
     id = models.AutoField(primary_key=True)
-    sender_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
-    receiver_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.sender_id}: {self.content}"
+        return f"From {self.sender} to {self.receiver}: {self.content[:30]}"
 
 
 class Follow(models.Model):
