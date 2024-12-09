@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'projectbbs',
         'USER': 'root',
-        'PASSWORD': 'nanami?114:514',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '3306',
     }

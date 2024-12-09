@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
@@ -6,6 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.db.models import Max
+from django.utils.timezone import localtime
 
 from app.models import *
 from app.models import User
@@ -27,6 +30,7 @@ def post_list(request):
     simplified_posts = []
     for post in posts:
         post.content = post.content[:20]
+        post.created_at = localtime(post.created_at, ZoneInfo("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M')
         username = post.author.username
         simplified_posts.append([post, username])
     simplified_posts = sorted(simplified_posts, key=lambda x: x[0].created_at, reverse=True)
@@ -82,10 +86,9 @@ def register_view(request):
     return render(request, 'register_page.html')
 
 
-
 def post_detail(request, post_id):
     post = Post.objects.get(id=post_id)
-
+    post.created_at = localtime(post.created_at, ZoneInfo("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M')
     post.content = markdown.markdown(post.content)  # 将Markdown转换为HTML
 
     if request.method == 'POST':
@@ -234,6 +237,23 @@ def add_server(request, redirect_to, **kwargs):
         elif err == SUCCESS:
             pass
         return redirect(redirect_to, **kwargs)
+    elif type_of_post == 'edit_server':
+        # edit a server
+        modify_server_id = request.POST.get('modify_server_id')
+        name = request.POST.get('name')
+        server = Server.objects.get(id=modify_server_id)
+        server.name = name
+        server.save()
+        return redirect(redirect_to, **kwargs)
+    elif type_of_post == 'delete_server':
+        # delete a server
+        delete_server_id = request.POST.get('delete_server_id')
+        server = Server.objects.get(id=delete_server_id)
+        server.delete()
+        server.save()
+        if str(delete_server_id) == str(kwargs.get('server_id')):
+            return redirect('public_chat_room')
+        return redirect(redirect_to, **kwargs)
 
 
 def add_channel(request, redirect_to, **kwargs):
@@ -241,6 +261,9 @@ def add_channel(request, redirect_to, **kwargs):
     type_of_post = request.POST.get('type')
     server_id = kwargs.get('server_id')
     server = Server.objects.get(id=server_id)
+    if user != server.owner:
+        messages.error(request, "You are not allowed to edit this server")
+        return redirect(redirect_to, **kwargs)
     if type_of_post == 'add_channel':
         # create a channel
         name = request.POST.get('name')
@@ -256,9 +279,11 @@ def add_channel(request, redirect_to, **kwargs):
         channel = Channel.objects.get(id=delete_channel_id)
         channel.delete()
         channel.save()
+        ServerChannel.objects.filter(server=server, channel=channel).delete()
+
         channels = get_channels_from_server(server)
-        if delete_channel_id == kwargs.get('channel_id'):
-            kwargs.items()['channel_id'] = channels[0].id
+        if str(delete_channel_id) == str(kwargs.get('channel_id')):
+            kwargs['channel_id'] = channels[0].id
         return redirect(redirect_to, **kwargs)
     else:
         # modify a channel
@@ -277,8 +302,14 @@ def public_chat_room(request):
     context = {}
     if request.method == 'POST':
         type_of_post = request.POST.get('type')
+        if ("edit" in type_of_post) or ("delete" in type_of_post):
+            changed_server_id = request.POST.get('modify_server_id' if "edit" in type_of_post else 'delete_server_id')
+            if user != Server.objects.get(id=changed_server_id).owner:
+                messages.error(request, "You are not allowed to edit or delete this server")
+                return redirect('public_chat_room')
+
         if "server" in type_of_post:
-            return add_server(request)
+            return add_server(request, 'public_chat_room')
 
     context['server_list'] = get_server_list(user=user)
     return render(request, 'public_chat_room.html', context=context)
@@ -289,9 +320,9 @@ def public_chat_room_in_server(request, server_id):
     if request.method == 'POST':
         type_of_post = request.POST.get('type')
         if "server" in type_of_post:
-            return add_server(request)
+            return add_server(request, 'public_chat_room_in_server', server_id=server_id)
         if "channel" in type_of_post:
-            return add_channel(request, server_id)
+            return add_channel(request, 'public_chat_room_in_server', server_id=server_id)
     user = request.user
     context = {}
     server = Server.objects.get(id=server_id)
@@ -306,7 +337,7 @@ def channel(request, server_id, channel_id):
     if request.method == 'POST':
         type_of_post = request.POST.get('type')
         if "server" in type_of_post:
-            return add_server(request, 'channel')
+            return add_server(request, 'channel', server_id=server_id, channel_id=channel_id)
         if "channel" in type_of_post:
             return add_channel(request, 'channel', server_id=server_id, channel_id=channel_id)
         pass
@@ -389,14 +420,25 @@ def chat_list(request):
 
     return render(request, 'chat_list.html', {'conversations': conversations})
 
+
 # views.py
 @login_required
 def chat_detail(request, user_id):
     other_user = get_object_or_404(User, id=user_id)
-    messages = PrivateMessage.objects.filter(
+    queryset = PrivateMessage.objects.filter(
         models.Q(sender=request.user, receiver=other_user) |
         models.Q(sender=other_user, receiver=request.user)
     ).order_by('timestamp')
+
+    messages = [
+        {
+            'content': message.content,
+            'sender': message.sender,
+            'receiver': message.receiver,
+            'timestamp': localtime(message.timestamp, ZoneInfo('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M')
+        }
+        for message in queryset
+    ]
 
     if request.method == 'POST':
         content = request.POST.get('content')

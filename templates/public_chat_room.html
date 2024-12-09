@@ -1,6 +1,7 @@
 {% extends 'main_page.html' %}
 
 {% block style %}
+    <!--
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,6 +21,7 @@
             margin: 0;
             height: 50px;
         }
+
         /* 导航栏样式 */
         nav {
             display: flex;
@@ -43,82 +45,7 @@
         nav a:hover {
             text-decoration: underline;
         }
-        /* 帖子表单样式 */
-        .post-form {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            max-width: 500px;
-            margin: 1rem auto;
-            padding: 1rem;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .post-form textarea {
-            width: 100%;
-            height: 100px;
-            padding: 0.5rem;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: vertical;
-        }
-        .post-form button {
-            align-self: flex-end;
-            padding: 0.5rem 1rem;
-            background-color: #6200ea;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .post-form button:hover {
-            background-color: #3700b3;
-        }
-        
-        /* 帖子列表样式 */
-        .post-list {
-            max-width: 800px;
-            margin: 1rem auto;
-            padding: 1rem;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .post-item {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .post-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-        .post-item h3 {
-            margin: 0;
-            font-size: 1.2rem;
-            color: #6200ea;
-        }
-        .post-item h3 a {
-            text-decoration: none;
-            color: inherit;
-        }
-        .post-item h3 a:hover {
-            text-decoration: underline;
-        }
-        .post-item p {
-            margin: 0.5rem 0 0;
-            font-weight: bold;
-            color: #333;
-        }
-        .post-item span {
-            font-size: 0.9rem;
-            color: #888;
-        }
+
         /*消息样式*/
         .messages {
             margin-top: 10px;
@@ -170,7 +97,7 @@
             /*flex-direction: column;*/
             /*gap: 10px;*/
         }
-        
+
         .sidebar {
             width: 170px;
             background-color: #3700b3;
@@ -240,6 +167,262 @@
             align-items: center;
         }
     </style>
+    -->
+    <style>
+        /* 通用样式 */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        /* 顶部标题样式 */
+        h1 {
+            text-align: center;
+            padding: 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            margin: 0;
+            height: 50px;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            background-color: #3f51b5;
+            height: 50px;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        .server-block {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;        /* 禁止换行，确保所有按钮在同一行 */
+            gap: 1px; /* 设置按钮之间的垂直间距 */
+        }
+
+        .server-block button {
+            margin-right: 10px; /* 设置按钮之间的水平间距 */
+            padding: 6px 12px;  /* 调整按钮的内边距以减小宽度 */
+            background-color: #3700b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            width: 100px; /* 让宽度适应文本的长度 */
+        }
+
+        /* 普通按钮悬停效果 */
+        .server-block button:hover {
+            background-color: #6200ea;
+        }
+
+        /* 修改和删除按钮 */
+        .server-block .server-modify-button,
+        .server-block .server-delete-button {
+            padding: 4px 4px 4px 4px;  /* 进一步减少按钮大小 */
+            margin-right: 0;
+            font-size: 12px;    /* 更小的字体 */
+            background-color: #FF5722;  /* 修改按钮的背景色 */
+            width: 50px; /* 让宽度适应文本的长度 */
+        }
+        
+        /* 修改和删除按钮的 hover 效果 */
+        .server-block .server-modify-button:hover,
+        .server-block .server-delete-button:hover {
+            background-color: #f44336;  /* 修改删除按钮的 hover 背景色 */
+        }
+
+
+        /* 按钮样式 */
+        .tab-btn, .channel-button {
+            background-color: #5b3893;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .tab-btn:hover, .channel-button:hover {
+            background-color: #4302a3;
+        }
+
+        /* 表单样式 */
+        .post-form, .modal form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 1rem auto;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-form textarea, .modal input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .post-form button, .modal button {
+            align-self: flex-end;
+            padding: 0.5rem 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .post-form button:hover, .modal button:hover {
+            background-color: #3700b3;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 200px;
+            background-color: #6200ea;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        /* 主体内容区域 */
+        .main-canvas {
+            display: flex;
+            height: calc(100% - 100px - 3rem);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #ecf0f1;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .body p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* 频道列表样式 */
+        .server-list button, .server-modify-button, .server-delete-button {
+            margin-bottom: 0.5rem;
+        }
+
+        .server-modify-button, .server-delete-button {
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .server-modify-button:hover, .server-delete-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-width: 400px;
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .modal h2 {
+            margin: 0 0 1rem;
+            color: #6200ea;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main-canvas {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .main-content {
+                padding: 10px;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -250,7 +433,11 @@
 
     <div class="server-list">
         {% for server in server_list %}
-            <button class="tab-btn" onclick="window.location.href='{% url "public_chat_room_in_server" server_id=server.id %}';">{{ server.name }}</button>
+            <div class="server-block">
+                <button class="tab-btn" onclick="window.location.href='{% url "public_chat_room_in_server" server_id=server.id %}';">{{ server.name }}</button>
+                <button class="server-modify-button server-{{ server.id }}">修改</button>
+                <button class="server-delete-button server-{{ server.id }}">删除</button>
+            </div>
         {% endfor %}
     </div>
 
@@ -278,6 +465,30 @@
             <input type="text" id="name" name="addr" required><br><br>
             <button type="submit">加入！</button>
             <button type="button" id="cancelJoin">取消</button>
+        </form>
+    </div>
+
+    <div class="modal" id="formModifyServer">
+        <h2>修改服务器信息</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="edit_server">
+            <input type="hidden" name="modify_server_id" id="modify_server_id">
+            <label style="color: black" for="name">服务器的名字</label>
+            <input type="text" id="name" name="name" required><br><br>
+            <button type="submit">修改！</button>
+            <button type="button" id="cancelModifyServer">取消</button>
+        </form>
+    </div>
+    <div class="modal" id="formDeleteServer">
+        <h2>删除服务器</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="delete_server">
+            <input type="hidden" name="delete_server_id" id="delete_server_id">
+            <label style="color: black" for="name">确认删除服务器吗？</label><br><br>
+            <button type="submit">删除！</button>
+            <button type="button" id="cancelDeleteChannel">取消</button>
         </form>
     </div>
 
@@ -322,6 +533,38 @@
     });
 
     const server_list = document.getElementById('server_list');
+
+    const modifyButtons = document.querySelectorAll('.server-modify-button');
+    const formModifyChannel = document.getElementById('formModifyServer');
+    const cancelModifyChannel = document.getElementById('cancelModifyServer');
+    const modifyChannelId = document.getElementById('modify_server_id');
+
+    modifyButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            modifyChannelId.value = this.className.match(/server-(\d+)/)[1];
+            formModifyChannel.style.display = 'block';
+        });
+    });
+
+    cancelModifyChannel.addEventListener('click', function() {
+        formModifyChannel.style.display = 'none';
+    });
+
+    const deleteButtons = document.querySelectorAll('.server-delete-button');
+    const formDeleteChannel = document.getElementById('formDeleteServer');
+    const cancelDeleteChannel = document.getElementById('cancelDeleteServer');
+    const deleteChannelId = document.getElementById('delete_server_id');
+
+    deleteButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            deleteChannelId.value = this.className.match(/server-(\d+)/)[1];
+            formDeleteChannel.style.display = 'block';
+        });
+    });
+
+    cancelDeleteChannel.addEventListener('click', function() {
+        formDeleteChannel.style.display = 'none';
+    });
     </script>
 {% endblock %}
 

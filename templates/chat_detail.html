@@ -1,13 +1,27 @@
 {% extends 'main_page.html' %}
+{% load tz %}
 
 {% block title %}聊天详情{% endblock %}
 
 {% block style %}
 {{ block.super }} <!-- 保留父模板的样式 -->
 <style>
-    /* 聊天框样式 */
+    /* 确保页面和主体容器占满整个视口 */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 使聊天框占据大部分空间 */
     #chat-box {
-        max-height: 500px;
+        flex: 1; /* 让聊天框自动填充剩余空间 */
+        max-height: 100%;
         overflow-y: auto;
         padding: 1rem;
         background-color: #fff;
@@ -17,23 +31,47 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
+    /* 保持聊天表单不超出视口 */
+    #chat-form {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border-top: 1px solid #ddd;
+    }
+
+    #chat-form textarea {
+        flex: 1;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: none;
+        height: 60px;
+    }
+
+    #chat-form button {
+        padding: 0.5rem 1rem;
+        background-color: #6200ea;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    #chat-form button:hover {
+        background-color: #3700b3;
+    }
+
+    /* 消息区域的样式 */
     .message {
         margin-bottom: 1rem;
         padding: 0.5rem;
         border-radius: 4px;
         background-color: #f9f9f9;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .message strong {
-        color: #6200ea;
-    }
-
-    .message small {
-        color: #666;
-        display: block;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
     }
 
     .message.sent {
@@ -50,51 +88,18 @@
     #chat-box::-webkit-scrollbar {
         width: 10px;
     }
+
     #chat-box::-webkit-scrollbar-thumb {
         background-color: #6200ea;
         border-radius: 10px;
     }
+
     #chat-box::-webkit-scrollbar-track {
         background-color: #f4f4f9;
     }
-
-    /* 表单样式 */
-    #chat-form {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    #chat-form textarea {
-        width: 100%;
-        height: 80px;
-        padding: 0.5rem;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        resize: none;
-    }
-
-    #chat-form button {
-        align-self: flex-end;
-        padding: 0.5rem 1rem;
-        background-color: #6200ea;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 1rem;
-    }
-
-    #chat-form button:hover {
-        background-color: #3700b3;
-    }
-
-    /* 发送消息动画 */
     .message {
         animation: fadeIn 0.3s ease-in-out;
     }
-
     @keyframes fadeIn {
         from {
             opacity: 0;
@@ -127,9 +132,9 @@
     {% for message in messages %}
         <div class="message {% if message.sender == user %}sent{% else %}received{% endif %}">
             <p>
-                {{ message.content }}
+                {{ message.content | linebreaksbr }}
             </p>
-            <small>{{ message.timestamp|date:"Y-m-d H:i" }}</small>
+            <small>{{ message.timestamp }}</small>
         </div>
     {% empty %}
         <p style="text-align: center; color: #888;">没有消息。</p>
@@ -158,6 +163,11 @@
         console.log('WebSocket 连接已建立');
     };
 
+    const formatTime = (timestamp) => {
+        const date = new Date(timestamp);
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+    };
+
     // 接收到消息时
     socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
@@ -167,8 +177,10 @@
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message');
         messageDiv.classList.add(String(data.sender_id) === String({{ user.id }}) ? 'sent' : 'received');
+        const messageContent = data.content.replace(/\n/g, '<br>');
 
-        messageDiv.innerHTML = `<strong>${data.sender_username}:</strong> ${data.content}<br><small>${data.timestamp}</small>`;
+        const formatedTime = formatTime(data.timestamp);
+        messageDiv.innerHTML = `<p>${messageContent}</p><small>${formatedTime}</small>`;
         // 将新消息添加到聊天框
         chatBox.appendChild(messageDiv);
 
@@ -186,9 +198,16 @@
         if (content) {
             const message = { content };
             socket.send(JSON.stringify(message));
-
             // 清空输入框
             form.querySelector('textarea').value = '';
+        }
+    });
+
+    const textarea = form.querySelector('textarea');
+    textarea.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {  // 如果按下的是 Enter 键且没有按 Shift 键
+            event.preventDefault();  // 阻止默认的换行行为
+            form.dispatchEvent(new Event('submit'));  // 触发表单提交
         }
     });
 

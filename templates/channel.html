@@ -1,6 +1,7 @@
 {% extends 'main_page.html' %}
 
 {% block style %}
+    <!--
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -278,6 +279,415 @@
             overflow-y: auto;
         }
     </style>
+    -->
+    <style>
+     /* 通用样式 */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        /* 顶部标题样式 */
+        h1 {
+            text-align: center;
+            padding: 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            margin: 0;
+            height: 50px;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            background-color: #3f51b5;
+            height: 50px;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        .server-block {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;        /* 禁止换行，确保所有按钮在同一行 */
+            gap: 1px; /* 设置按钮之间的垂直间距 */
+        }
+
+        .server-block button {
+            margin-right: 10px; /* 设置按钮之间的水平间距 */
+            padding: 6px 12px;  /* 调整按钮的内边距以减小宽度 */
+            background-color: #3700b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            width: 100px; /* 让宽度适应文本的长度 */
+        }
+
+        /* 普通按钮悬停效果 */
+        .server-block button:hover {
+            background-color: #6200ea;
+        }
+
+        /* 修改和删除按钮 */
+        .server-block .server-modify-button,
+        .server-block .server-delete-button {
+            padding: 4px 4px 4px 4px;  /* 进一步减少按钮大小 */
+            margin-right: 0;
+            font-size: 12px;    /* 更小的字体 */
+            background-color: #FF5722;  /* 修改按钮的背景色 */
+            width: 50px; /* 让宽度适应文本的长度 */
+        }
+
+        /* 修改和删除按钮的 hover 效果 */
+        .server-block .server-modify-button:hover,
+        .server-block .server-delete-button:hover {
+            background-color: #f44336;  /* 修改删除按钮的 hover 背景色 */
+        }
+
+
+        /* 按钮样式 */
+        .tab-btn, .channel-button {
+            background-color: #5b3893;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .tab-btn:hover, .channel-button:hover {
+            background-color: #4302a3;
+        }
+
+        /* 表单样式 */
+        .post-form, .modal form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 1rem auto;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-form textarea, .modal input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .post-form button, .modal button {
+            align-self: flex-end;
+            padding: 0.5rem 1rem;
+            background-color: #6200ea;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .post-form button:hover, .modal button:hover {
+            background-color: #3700b3;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 200px;
+            background-color: #6200ea;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        /* 主体内容区域 */
+        .main-canvas {
+            display: flex;
+            height: calc(100% - 100px - 3rem);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #ecf0f1;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: auto;
+        }
+
+        .body p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+        .channel-view {
+            background-color: #26015c;
+            display: block;
+            width: 200px;
+            text-align: left;
+            font-size: 18px;
+            padding: 20px 5px 20px 5px;
+            overflow-y: auto;
+        }
+
+        .channel-list {
+            display: flex;
+            flex-direction: column;    /* 每个 channel 的按钮组排列在垂直方向 */
+            gap: 15px;                 /* 为每个 channel 组之间添加垂直间距 */
+        }
+
+        .channel-block {
+            display: flex;             /* 使用 Flexbox 排列按钮 */
+            flex-wrap: nowrap;         /* 禁止换行 */
+            gap: 10px;                 /* 为按钮之间添加水平间距 */
+            align-items: center;       /* 垂直居中按钮 */
+        }
+
+        .channel-button {
+            padding: 6px 12px;         /* 调整按钮的内边距 */
+            background-color: #3700b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            width: 100px;               /* 让按钮宽度适应文本内容 */
+            flex-shrink: 0;            /* 防止按钮因容器宽度不足而缩小 */
+        }
+
+        .channel-button:hover {
+            background-color: #6200ea;
+        }
+
+        /* 修改和删除按钮的样式 */
+        .channel-modify-button,
+        .channel-delete-button {
+            padding: 4px 8px;          /* 减小按钮大小 */
+            font-size: 12px;           /* 更小的字体 */
+            background-color: #FF5722;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .channel-modify-button:hover,
+        .channel-delete-button:hover {
+            background-color: #f44336;
+        }
+
+        .channel-add-button {
+            padding: 8px 16px;          /* 增加按钮内边距 */
+            background-color: #4CAF50;  /* 设置绿色背景 */
+            color: white;               /* 设置文本颜色为白色 */
+            border-top: 16px;
+            {#border: none;               /* 去除默认边框 */#}
+            border-radius: 4px;         /* 设置圆角 */
+            cursor: pointer;            /* 鼠标悬停时显示手型 */
+            font-size: 14px;             /* 设置字体大小 */
+            transition: background-color 0.3s, transform 0.3s;  /* 添加悬停时的背景色变化与缩放效果 */
+            width: 100%;                /* 让按钮宽度适应文本内容 */
+        }
+
+        .channel-add-button:hover {
+            background-color: #45a049;  /* 悬停时改变按钮背景色 */
+            transform: scale(1.05);      /* 悬停时稍微放大按钮 */
+        }
+
+        .channel-add-button:focus {
+            outline: none;              /* 去除焦点时的默认轮廓 */
+        }
+
+
+        /* 频道列表样式 */
+        .server-list button, .server-modify-button, .server-delete-button {
+            margin-bottom: 0.5rem;
+        }
+
+        .server-modify-button, .server-delete-button {
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .server-modify-button:hover, .server-delete-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-width: 400px;
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .modal h2 {
+            margin: 0 0 1rem;
+            color: #6200ea;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main-canvas {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .main-content {
+                padding: 10px;
+            }
+        }
+     /* Chat container */
+        .chat-container {
+            display: flex;
+            flex-direction: column;  /* 设置为垂直排列 */
+            height: 100%;             /* 占满整个父容器的高度 */
+            width: 100%;
+            justify-content: flex-end; /* 使消息列表尽可能位于底部 */
+        }
+
+        /* Chat log container */
+        .chat-log {
+            flex-grow: 1;             /* 消息列表部分占据剩余空间 */
+            {#max-height: 400px;        /* 设置最大高度 */#}
+            overflow-y: auto;         /* 当内容超出时显示滚动条 */
+            background-color: #f9f9f9;  /* 设置背景颜色 */
+            padding: 10px;            /* 设置内边距 */
+            border-radius: 8px;       /* 圆角效果 */
+            border: 1px solid #ddd;   /* 边框颜色 */
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        /* Each message */
+        .chat-log p {
+            margin: 5px 0;            /* 设置每条消息的上下间距 */
+            line-height: 1.5;          /* 设置行高 */
+        }
+
+        /* User name in the message */
+        .chat-log strong {
+            color: #007bff;           /* 用户名颜色 */
+        }
+
+        /* Chat input area */
+        .chat-message-input {
+            flex-grow: 1;
+            width: 100%;
+            height: 60px;  /* 设置输入框的高度 */
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: none;  /* 禁止文本框缩放 */
+            outline: none;
+            line-height: 1.5;
+        }
+
+        /* Send button */
+        .chat-message-button {
+            padding: 10px 20px;        /* 按钮的内边距 */
+            background-color: #6200ea;  /* 按钮的背景色 */
+            color: white;              /* 按钮文字颜色 */
+            border: none;              /* 去掉按钮边框 */
+            border-radius: 4px;        /* 按钮圆角效果 */
+            cursor: pointer;          /* 鼠标指针 */
+            transition: background-color 0.3s;
+        }
+
+        .chat-message-button:hover {
+            background-color: #3700b3; /* 按钮悬停时背景色变化 */
+        }
+
+        /* Layout for the input and button */
+        .chat-input-container {
+            display: flex;
+            align-items: center;        /* 垂直居中对齐 */
+            padding: 10px;
+            background-color: #f0f0f0; /* 背景颜色 */
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -288,10 +698,13 @@
 
     <div class="server-list">
         {% for server in server_list %}
-            <button class="tab-btn" onclick="window.location.href='{% url "public_chat_room_in_server" server_id=server.id %}';">{{ server.name }}</button>
+            <div class="server-block">
+                <button class="tab-btn" onclick="window.location.href='{% url "public_chat_room_in_server" server_id=server.id %}';">{{ server.name }}</button>
+                <button class="server-modify-button server-{{ server.id }}">修改</button>
+                <button class="server-delete-button server-{{ server.id }}">删除</button>
+            </div>
         {% endfor %}
     </div>
-
     <button class="tab-btn" id="createServer">创建你的服务器</button>
 
     <div class="modal" id="formCreateServer">
@@ -318,16 +731,76 @@
             <button type="button" id="cancelJoin">取消</button>
         </form>
     </div>
-
+    <div class="modal" id="formModifyServer">
+        <h2>修改服务器信息</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="edit_server">
+            <input type="hidden" name="modify_server_id" id="modify_server_id">
+            <label style="color: black" for="name">服务器的名字</label>
+            <input type="text" id="name" name="name" required><br><br>
+            <button type="submit">修改！</button>
+            <button type="button" id="cancelModifyServer">取消</button>
+        </form>
     </div>
+    <div class="modal" id="formDeleteServer">
+        <h2>删除服务器</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="delete_server">
+            <input type="hidden" name="delete_server_id" id="delete_server_id">
+            <label style="color: black" for="name">确认删除服务器吗？</label><br><br>
+            <button type="submit">删除！</button>
+            <button type="button" id="cancelDeleteServer">取消</button>
+        </form>
+    </div>
+    </div>
+    <script>
+        const modifyButtonsServer = document.querySelectorAll('.server-modify-button');
+        const formModifyServer = document.getElementById('formModifyServer');
+        const cancelModifyServer = document.getElementById('cancelModifyServer');
+        const modifyServerId = document.getElementById('modify_server_id');
+
+        modifyButtonsServer.forEach(function(button) {
+            button.addEventListener('click', function() {
+                modifyServerId.value = this.className.match(/server-(\d+)/)[1];
+                formModifyServer.style.display = 'block';
+            });
+        });
+
+        cancelModifyServer.addEventListener('click', function() {
+            formModifyServer.style.display = 'none';
+        });
+
+        const deleteButtonsServer = document.querySelectorAll('.server-delete-button');
+        const formDeleteServer = document.getElementById('formDeleteServer');
+        const cancelDeleteServer = document.getElementById('cancelDeleteServer');
+        const deleteServerId = document.getElementById('delete_server_id');
+
+        deleteButtonsServer.forEach(function(button) {
+            button.addEventListener('click', function() {
+                deleteServerId.value = this.className.match(/server-(\d+)/)[1];
+                formDeleteServer.style.display = 'block';
+            });
+        });
+
+        cancelDeleteServer.addEventListener('click', function() {
+            formDeleteServer.style.display = 'none';
+        });
+    </script>
 
     <div class="channel-view">
     <h3 style="color: #ecf0f1">频道列表</h3>
+    <div class="channel-list">
     {% for channel in channel_list %}
-        <button class="channel-button" onclick="window.location.href='{% url "channel" server_id=server.id channel_id=channel.id %}';">{{ channel.name }}</button>
-        <button class="channel-modify-button channel-{{ channel.id }}">修改</button>
-        <button class="channel-delete-button channel-{{ channel.id }}">删除</button>
+        <div class="channel-block">
+            <button class="channel-button" onclick="window.location.href='{% url "channel" server_id=server.id channel_id=channel.id %}';">{{ channel.name }}</button>
+            <button class="channel-modify-button channel-{{ channel.id }}">修改</button>
+            <button class="channel-delete-button channel-{{ channel.id }}">删除</button>
+        </div>
     {% endfor %}
+
+    </div>
     <button class="channel-add-button">添加频道</button>
     <div class="modal" id="formAddChannel">
         <h2>添加频道</h2>
@@ -399,7 +872,7 @@
         
         deleteButtons.forEach(function(button) {
             button.addEventListener('click', function() {
-                deleteChannelId.valu = this.className.match(/channel-(\d+)/)[1];
+                deleteChannelId.value = this.className.match(/channel-(\d+)/)[1];
                 formDeleteChannel.style.display = 'block';
             });
         });
@@ -411,14 +884,18 @@
     </div>
     <div class="main-content">
         {% if server %}
+            <div class="chat-container">
             <div class="chat-log" id="chat-log">
             {% for message in history %}
-                <p><strong>{{ message.user_name }}: </strong>{{ message.content }} <br> on {{ message.time }}</p>
+                <p><strong>{{ message.user_name }}: </strong><br>{{ message.content | linebreaksbr }} <br> on {{ message.time }}</p>
             {% endfor %}
             </div>
             <br><br>
-            <input class="chat-message-input" id="chat-message-input" type="text" size="100">
-            <button class="chat-message-button" id="chat-message-button">Send</button>
+            <div class="chat-input-container">
+                <textarea class="chat-message-input" id="chat-message-input" required></textarea>
+                <button class="chat-message-button" id="chat-message-button">Send</button>
+            </div>
+            </div>
 
             <script>
                 function scrollToBottom() {
@@ -437,14 +914,15 @@
                     `ws://${window.location.host}/ws/chat_room/${server_id}/${channel_id}/${user_id}/`
                 );
 
-                message_template = function(message) {
-                    return `<p><strong>${message.user_name}: </strong>${message.message} <br> on ${ message.time }</p>`;
+                message_template = function(user_name, message, time) {
+                    return `<p><strong>${user_name}: </strong><br> ${message} <br> on ${ time }</p>`;
                 }
 
                 chatSocket.onmessage = function(e) {
                     console.log("Hello");
                     const data = JSON.parse(e.data);
-                    document.querySelector('#chat-log').innerHTML += message_template(data);
+                    const message = data.message.replace(/\n/g, '<br>');
+                    document.querySelector('#chat-log').innerHTML += message_template(data.user_name, message, data.time);
                     scrollToBottom();
                 };
 
@@ -453,8 +931,9 @@
                 };
 
                 document.querySelector('#chat-message-button').focus();
-                document.querySelector('#chat-message-button').onkeyup = function(e) {
-                    if (e.keyCode === 13) {  // 按下 Enter 键
+                document.querySelector('#chat-message-input').onkeydown = function(e) {
+                    if (e.keyCode === 13 && !e.shiftKey) {  // 按下 Enter 键
+                        e.preventDefault();
                         document.querySelector('#chat-message-button').click();
                     }
                 };
@@ -462,6 +941,9 @@
                 document.querySelector('#chat-message-button').onclick = function(e) {
                     const messageInput = document.querySelector('#chat-message-input');
                     const message = messageInput.value;
+                    if (message.trim() === '') {
+                        return;
+                    }
                     chatSocket.send(JSON.stringify({
                         'message': message,
                         'user_id': user_id

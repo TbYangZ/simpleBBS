@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 import markdown
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.base_user import BaseUserManager
@@ -7,6 +9,7 @@ from django.db import models
 from django.utils import timezone
 from django.db.models import Q
 from django.http import JsonResponse
+from django.utils.timezone import localtime
 from django.views.decorators.csrf import csrf_exempt
 import json
 # Create your models here.
@@ -316,9 +319,10 @@ def get_channel_history(channel):
         history.append({
             'user_name': User.objects.get(id=message.user_id).username,
             'content': message.content,
-            'time': message.time.strftime('%Y-%m-%d %H:%M:%S'),
+            'time': localtime(message.time, ZoneInfo("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M:%S'),
         })
     return history
+
 
 class PrivateMessage(models.Model):
     sender = models.ForeignKey(

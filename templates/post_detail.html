@@ -70,8 +70,8 @@
 
         /* 帖子和评论样式 */
         .post, .comments {
-            width: 90%;
-            max-width: 600px;
+            width: 100%;
+            max-width: 1000px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -90,6 +90,12 @@
 
         .post ul li {
             font-weight: bold;
+        }
+        
+        .comment-view {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
 
         .comments h2 {
@@ -240,8 +246,8 @@
             <ul>
                 <!-- 为作者添加链接，点击后跳转到该作者的主页 -->
                 <li>作者: <a href="{% url 'user_main_page' post.author.id %}">{{ post.author.username }}</a></li>
-                <li>内容: <div class="post-content">{{ post.content|safe }}</div></li> <!-- 使用 safe 来渲染 HTML -->
-                <li>创建于: {{ post.created_at|date:"Y-m-d H:i" }}</li>
+                <li> <div class="post-content">{{ post.content|safe }}</div></li> <!-- 使用 safe 来渲染 HTML -->
+                <li>创建于: {{ post.created_at }}</li>
             </ul>
         </div>
 
@@ -274,8 +280,10 @@
         {% if user.is_authenticated %}
             <form method="post" class="comment-form">
                 {% csrf_token %}
-                <textarea name="content" placeholder="写下你的评论..." required></textarea>
-                <button type="submit">提交评论</button>
+                <div class="comment-view">
+                    <textarea name="content" placeholder="写下你的评论..." required></textarea>
+                    <button type="submit">提交</button>
+                </div>
             </form>
         {% endif %}
     </div>
