@@ -221,6 +221,21 @@
             transition: background-color 0.3s;
         }
 
+        .channel-add-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            text-align: left;
+            width: 150px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .channel-add-button:hover {
+            background-color: #34495e;
+        }
+
         .channel-button:hover {
             background-color: #34495e;
         }
@@ -310,7 +325,89 @@
     <h3 style="color: #ecf0f1">频道列表</h3>
     {% for channel in channel_list %}
         <button class="channel-button" onclick="window.location.href='{% url "channel" server_id=server.id channel_id=channel.id %}';">{{ channel.name }}</button>
+        <button class="channel-modify-button channel-{{ channel.id }}">修改</button>
+        <button class="channel-delete-button channel-{{ channel.id }}">删除</button>
     {% endfor %}
+    <button class="channel-add-button">添加频道</button>
+    <div class="modal" id="formAddChannel">
+        <h2>添加频道</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="add_channel">
+            <label style="color: black" for="name">频道的名字</label>
+            <input type="text" id="name" name="name" required><br><br>
+            <button type="submit">添加！</button>
+            <button type="button" id="cancelAddChannel">取消</button>
+        </form>
+    </div>
+    <div class="modal" id="formModifyChannel">
+        <h2>修改频道信息</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="edit_channel">
+            <input type="hidden" name="modify_channel_id" id="modify_channel_id">
+            <label style="color: black" for="name">频道的名字</label>
+            <input type="text" id="name" name="name" required><br><br>
+            <button type="submit">修改！</button>
+            <button type="button" id="cancelModifyChannel">取消</button>
+        </form>
+    </div>
+    <div class="modal" id="formDeleteChannel">
+        <h2>删除频道</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="delete_channel">
+            <input type="hidden" name="delete_channel_id" id="delete_channel_id">
+            <label style="color: black" for="name">确认删除频道吗？</label><br><br>
+            <button type="submit">删除！</button>
+            <button type="button" id="cancelDeleteChannel">取消</button>
+        </form>
+    </div>
+    <script>
+        const addChannel = document.querySelector('.channel-add-button');
+        const formAddChannel = document.getElementById('formAddChannel');
+        const cancelAddChannel = document.getElementById('cancelAddChannel');
+
+        addChannel.addEventListener('click', function() {
+            formAddChannel.style.display = 'block';
+        });
+
+        cancelAddChannel.addEventListener('click', function() {
+            formAddChannel.style.display = 'none';
+        });
+        
+        const modifyButtons = document.querySelectorAll('.channel-modify-button');
+        const formModifyChannel = document.getElementById('formModifyChannel');
+        const cancelModifyChannel = document.getElementById('cancelModifyChannel');
+        const modifyChannelId = document.getElementById('modify_channel_id');
+        
+        modifyButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                modifyChannelId.value = this.className.match(/channel-(\d+)/)[1];
+                formModifyChannel.style.display = 'block';
+            });
+        });
+        
+        cancelModifyChannel.addEventListener('click', function() {
+            formModifyChannel.style.display = 'none';
+        });
+        
+        const deleteButtons = document.querySelectorAll('.channel-delete-button');
+        const formDeleteChannel = document.getElementById('formDeleteChannel');
+        const cancelDeleteChannel = document.getElementById('cancelDeleteChannel');
+        const deleteChannelId = document.getElementById('delete_channel_id');
+        
+        deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                deleteChannelId.valu = this.className.match(/channel-(\d+)/)[1];
+                formDeleteChannel.style.display = 'block';
+            });
+        });
+        
+        cancelDeleteChannel.addEventListener('click', function() {
+            formDeleteChannel.style.display = 'none';
+        });
+    </script>
     </div>
     <div class="main-content">
         {% if server %}
@@ -411,8 +508,6 @@
     cancelCreate.addEventListener('click', function() {
         formCreateServer.style.display = 'none'; // 隐藏表单
     });
-
-    const server_list = document.getElementById('server_list');
     </script>
 {% endblock %}
 

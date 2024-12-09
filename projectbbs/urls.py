@@ -34,7 +34,6 @@ urlpatterns = [
     path('chat_room/', views.public_chat_room, name='public_chat_room'),
     path('chat_room/<int:server_id>/', views.public_chat_room_in_server, name='public_chat_room_in_server'),
     path('chat_room/<int:server_id>/<int:channel_id>/', views.channel, name='channel'),
-    # path('ws/chat/<int:server_id>/<int:channel_id>/', consumers.ChatConsumer.as_asgi()),
     path('send_message/', views.send_message, name='send_message'),
     path('inbox/', views.inbox, name='inbox'),
     path('message/<int:message_id>/', views.message_detail, name='message_detail'),

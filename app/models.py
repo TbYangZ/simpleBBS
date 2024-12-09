@@ -112,8 +112,8 @@ class Review(models.Model):
 
 class Messages(models.Model):
     id = models.AutoField(primary_key=True)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages', default=None)
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages', default=None)
     content = models.TextField()
     time = models.DateTimeField(auto_now_add=True)
 

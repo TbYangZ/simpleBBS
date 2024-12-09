@@ -209,6 +209,63 @@ def edit_post(request, post_id):
     return render(request, 'edit_post.html', {'form': form, 'post': post})
 
 
+def add_server(request, redirect_to, **kwargs):
+    user = request.user
+    type_of_post = request.POST.get('type')
+    if type_of_post == 'create_server':
+        # create a server
+        name = request.POST.get('name')
+        server = create_server(server_name=name, owner=user)
+        return redirect(redirect_to, **kwargs)
+    elif type_of_post == 'join_server':
+        # join a server
+        server_id = request.POST.get('addr')
+        err, msg = join_server(server_id, user)
+        if err == ERROR_SECRET_SERVER:
+            messages.error(request, "This is a secret server, you need a password to join")
+        elif err == ERROR_ALREADY_IN_SERVER:
+            messages.error(request, "You are already in this server")
+        elif err == ERROR_BLOCKED_BY_SERVER_OWNER:
+            messages.error(request, "You are blocked by the server owner")
+        elif err == SUCCESS:
+            pass
+        return redirect(redirect_to, **kwargs)
+
+
+def add_channel(request, redirect_to, **kwargs):
+    user = request.user
+    type_of_post = request.POST.get('type')
+    server_id = kwargs.get('server_id')
+    server = Server.objects.get(id=server_id)
+    if type_of_post == 'add_channel':
+        # create a channel
+        name = request.POST.get('name')
+        channel = create_channel(channel_name=name, server=server, current_user=user)
+        return redirect(redirect_to, **kwargs)
+    elif type_of_post == 'delete_channel':
+        # delete a channel
+        channels = get_channels_from_server(server)
+        if len(channels) == 1:
+            messages.error(request, "You can't delete the last channel")
+            return redirect(redirect_to, **kwargs)
+        delete_channel_id = request.POST.get('delete_channel_id')
+        channel = Channel.objects.get(id=delete_channel_id)
+        channel.delete()
+        channel.save()
+        channels = get_channels_from_server(server)
+        if delete_channel_id == kwargs.get('channel_id'):
+            kwargs.items()['channel_id'] = channels[0].id
+        return redirect(redirect_to, **kwargs)
+    else:
+        # modify a channel
+        modify_channel_id = request.POST.get('modify_channel_id')
+        name = request.POST.get('name')
+        channel = Channel.objects.get(id=modify_channel_id)
+        channel.name = name
+        channel.save()
+        return redirect(redirect_to, **kwargs)
+
+
 @login_required
 def public_chat_room(request):
     # create a server or join a server
@@ -216,24 +273,8 @@ def public_chat_room(request):
     context = {}
     if request.method == 'POST':
         type_of_post = request.POST.get('type')
-        if type_of_post == 'create_server':
-            # create a server
-            name = request.POST.get('name')
-            server = create_server(server_name=name, owner=user)
-            return redirect('public_chat_room')
-        else:
-            # join a server
-            server_id = request.POST.get('addr')
-            err, msg = join_server(server_id, user)
-            if err == ERROR_SECRET_SERVER:
-                messages.error(request, "This is a secret server, you need a password to join")
-            elif err == ERROR_ALREADY_IN_SERVER:
-                messages.error(request, "You are already in this server")
-            elif err == ERROR_BLOCKED_BY_SERVER_OWNER:
-                messages.error(request, "You are blocked by the server owner")
-            elif err == SUCCESS:
-                pass
-            return redirect('public_chat_room')
+        if "server" in type_of_post:
+            return add_server(request)
 
     context['server_list'] = get_server_list(user=user)
     return render(request, 'public_chat_room.html', context=context)
@@ -242,7 +283,11 @@ def public_chat_room(request):
 @login_required
 def public_chat_room_in_server(request, server_id):
     if request.method == 'POST':
-        pass
+        type_of_post = request.POST.get('type')
+        if "server" in type_of_post:
+            return add_server(request)
+        if "channel" in type_of_post:
+            return add_channel(request, server_id)
     user = request.user
     context = {}
     server = Server.objects.get(id=server_id)
@@ -255,6 +300,11 @@ def public_chat_room_in_server(request, server_id):
 @login_required
 def channel(request, server_id, channel_id):
     if request.method == 'POST':
+        type_of_post = request.POST.get('type')
+        if "server" in type_of_post:
+            return add_server(request, 'channel')
+        if "channel" in type_of_post:
+            return add_channel(request, 'channel', server_id=server_id, channel_id=channel_id)
         pass
     user = request.user
     server = Server.objects.get(id=server_id)

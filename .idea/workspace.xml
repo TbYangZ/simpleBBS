@@ -5,26 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="64c47aea-b5de-4416-a690-dc7076cf03b3" name="更改" comment="demo">
-      <change afterPath="$PROJECT_DIR$/app/consumers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routing.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/static/css/styles.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/static/js/scripts.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/channel.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/public_chat_room.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/server.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/inbox.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/message_detail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/send_message.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/migrations/0002_rename_auther_id_post_author.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/migrations/0003_rename_block_user_id_blocks_blocked_user_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/migrations/0004_alter_post_author.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectbbs/asgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/asgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectbbs/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/projectbbs/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/main_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/main_page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/channel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/channel.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,9 +225,8 @@
       <workItem from="1732167382023" duration="15912000" />
       <workItem from="1732524922786" duration="64000" />
       <workItem from="1732525359739" duration="13372000" />
-      <workItem from="1731845845120" duration="11822000" />
-      <workItem from="1732006396795" duration="5545000" />
-      <workItem from="1732610814288" duration="329000" />
+      <workItem from="1733215797394" duration="336000" />
+      <workItem from="1733216435358" duration="3821000" />
     </task>
     <task id="LOCAL-00001" summary="demo">
       <option name="closed" value="true" />
@@ -280,15 +268,7 @@
       <option name="project" value="LOCAL" />
       <updated>1731403365715</updated>
     </task>
-    <task id="LOCAL-00006" summary="demo">
-      <option name="closed" value="true" />
-      <created>1731857452786</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1731857452786</updated>
-    </task>
-    <option name="localTasksCounter" value="7" />
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -320,7 +300,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="master" />
+                        <option value="beautify" />
                       </list>
                     </value>
                   </entry>
@@ -337,7 +317,7 @@
     <option name="LAST_COMMIT_MESSAGE" value="demo" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/projectbbs$daphne.coverage" NAME="daphne 覆盖结果" MODIFIED="1732538897982" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/projectbbs$daphne.coverage" NAME="daphne 覆盖结果" MODIFIED="1733219966806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/projectbbs$manage_test.coverage" NAME="manage_test 覆盖结果" MODIFIED="1731313051385" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/projectbbs$manage.coverage" NAME="manage 覆盖结果" MODIFIED="1730303029103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
