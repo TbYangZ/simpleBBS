@@ -5,15 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="64c47aea-b5de-4416-a690-dc7076cf03b3" name="更改" comment="demo">
+      <change afterPath="$PROJECT_DIR$/templates/inbox.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/message_detail.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/send_message.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0002_rename_auther_id_post_author.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0003_rename_block_user_id_blocks_blocked_user_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0004_alter_post_author.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routing.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectbbs/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/projectbbs/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/channel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/channel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/main_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/main_page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/post_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/post_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/user_main_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user_main_page.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +30,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Python Script" />
         <option value="HTML File" />
         <option value="Python Script" />
       </list>
@@ -79,13 +84,12 @@
     &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/workspace/projectbbs/.venv/Scripts/daphne.exe&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;http.certificates&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -94,16 +98,8 @@
     ]
   }
 }</component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\workspace\projectbbs\app" />
-      <recent name="D:\workspace\projectbbs\templates" />
-      <recent name="D:\workspace\projectbbs" />
-      <recent name="D:\workspace\projectbbs\app\static" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Python.daphne">
-    <configuration name="daphne" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Django Server.projectbbs">
+    <configuration name="manage_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="projectbbs" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -118,8 +114,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/.venv/Scripts/daphne.exe" />
-      <option name="PARAMETERS" value="projectbbs.asgi:application" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/manage.py" />
+      <option name="PARAMETERS" value="test" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -137,7 +133,6 @@
         <env name="DJANGO_SETTINGS_MODULE" value="projectbbs.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.12 (projectbbs)" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -178,9 +173,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Django 服务器.projectbbs" />
-      <item itemvalue="Django 服务器.projectbbs_daphne" />
-      <item itemvalue="Python.daphne" />
+      <item itemvalue="Django Server.projectbbs" />
+      <item itemvalue="Python.manage_test" />
     </list>
     <recent_temporary>
       <list>
@@ -220,13 +214,9 @@
       <workItem from="1731388826748" duration="81000" />
       <workItem from="1731388925381" duration="524000" />
       <workItem from="1731401192582" duration="2277000" />
-      <workItem from="1731845845120" duration="11019000" />
-      <workItem from="1732006922604" duration="4216000" />
-      <workItem from="1732167382023" duration="15912000" />
-      <workItem from="1732524922786" duration="64000" />
-      <workItem from="1732525359739" duration="13372000" />
-      <workItem from="1733215797394" duration="336000" />
-      <workItem from="1733216435358" duration="3821000" />
+      <workItem from="1731845845120" duration="11822000" />
+      <workItem from="1732006396795" duration="5545000" />
+      <workItem from="1732610814288" duration="329000" />
     </task>
     <task id="LOCAL-00001" summary="demo">
       <option name="closed" value="true" />
@@ -316,8 +306,19 @@
     <MESSAGE value="demo" />
     <option name="LAST_COMMIT_MESSAGE" value="demo" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/templates/channel.html</url>
+          <line>361</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/projectbbs$daphne.coverage" NAME="daphne 覆盖结果" MODIFIED="1733219966806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/projectbbs$manage_test.coverage" NAME="manage_test 覆盖结果" MODIFIED="1731313051385" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/projectbbs$manage.coverage" NAME="manage 覆盖结果" MODIFIED="1730303029103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

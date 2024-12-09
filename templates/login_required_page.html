@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需要登录</title>
+    <script>
+        // 倒计时初始值
+        var countdown = 3;
+
+        // 页面加载后开始倒计时
+        var countdownTimer = setInterval(function() {
+            // 更新倒计时文本
+            document.getElementById("countdown").innerText = countdown + "秒后将自动跳转到登录页面...";
+
+            // 当倒计时结束时，跳转到登录页面
+            if (countdown === 0) {
+                clearInterval(countdownTimer);  // 清除定时器
+                window.location.href = "{% url 'login' %}";  // 跳转到登录页面
+            }
+
+            // 递减倒计时
+            countdown--;
+        }, 1000); // 每1000毫秒（1秒）更新一次
+    </script>
+</head>
+<body>
+    <h1>您需要登录才能查看此页面</h1>
+    <p>请登录后再继续。</p>
+    <p id="countdown">3秒后将自动跳转到登录页面...</p>
+</body>
+</html>

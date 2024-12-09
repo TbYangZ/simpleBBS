@@ -1,0 +1,101 @@
+{% extends 'main_page.html' %}
+
+{% block title %}消息列表{% endblock %}
+
+{% block style %}
+{{ block.super }}
+<style>
+    /* 页面标题 */
+    .page-title {
+        text-align: center;
+        font-size: 2rem;
+        color: #6200ea;
+        margin-top: 20px;
+    }
+
+    /* 消息列表容器 */
+    .conversation-list {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 每一条对话项 */
+    .conversation-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .conversation-item:hover {
+        background-color: #f7f7f7;
+        transform: translateY(-5px);
+    }
+
+    /* 对话信息 */
+    .conversation-info {
+        flex: 1;
+    }
+
+    .conversation-link {
+        font-size: 1.2rem;
+        color: #6200ea;
+        text-decoration: none;
+    }
+
+    .conversation-link:hover {
+        text-decoration: underline;
+    }
+
+    .latest-message {
+        color: #666;
+        font-size: 1rem;
+        margin: 5px 0;
+    }
+
+    /* 时间戳 */
+    .timestamp {
+        font-size: 0.9rem;
+        color: #888;
+        align-self: flex-start;
+        margin-top: 10px;
+    }
+
+    /* 当没有消息时的文本样式 */
+    .no-conversations {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #888;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1>消息列表</h1>
+
+    <div class="conversation-list">
+        {% for conversation in conversations %}
+            <div class="conversation-item">
+                <div>
+                    <h3><a href="{% url 'chat_detail' user_id=conversation.sender.id %}">与 {{ conversation.sender.username }} 的对话</a></h3>
+                    <p>最新消息: {{ conversation.content|truncatechars:50 }}</p>
+                </div>
+                <small>{{ conversation.timestamp|date:"Y-m-d H:i" }}</small>
+            </div>
+        {% empty %}
+            <p style="text-align: center;">没有私信。</p>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block post_form %}
+{% endblock %}
+
+{% block posts %}
+{% endblock %}

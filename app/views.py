@@ -1,12 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.db.models import Max
 
 from app.models import *
+from app.models import User
 import markdown
 from app.forms import PostForm, MessageForm
 
@@ -98,6 +100,8 @@ def post_detail(request, post_id):
 
 
 def user_main_page(request, user_id):
+    if not request.user.is_authenticated:
+        return render(request, 'login_required_page.html')
     user = User.objects.get(id=user_id)
     current_user = request.user
 
@@ -346,3 +350,58 @@ def message_detail(request, message_id):
     message = get_object_or_404(Messages, id=message_id, receiver=request.user)
     rendered_content = markdown.markdown(message.content)
     return render(request, 'message_detail.html', {'message': message, 'rendered_content': rendered_content})
+
+
+@login_required
+def chat_list(request):
+    user = request.user
+
+    # 获取每个对话中最后一条消息的时间戳
+    latest_messages = (
+        PrivateMessage.objects.filter(
+            Q(sender=user) | Q(receiver=user)
+        )
+        .values('sender', 'receiver')
+        .annotate(latest_timestamp=Max('timestamp'))
+    )
+
+    # 获取每个对话的最后一条消息
+    conversations = []
+    M = {}
+    for msg in latest_messages:
+        last_message = PrivateMessage.objects.filter(
+            Q(sender=msg['sender'], receiver=user) | Q(sender=user, receiver=msg['receiver']),
+            timestamp=msg['latest_timestamp']
+        ).first()
+        sender_id = last_message.sender.id
+        receiver_id = last_message.receiver.id
+        user_id1 = min(sender_id, receiver_id)
+        user_id2 = max(sender_id, receiver_id)
+        mark = f"{user_id1}:{user_id2}"
+        if M.get(mark) is None:
+            M[mark] = last_message
+        elif M.get(mark).timestamp < last_message.timestamp:
+            M[mark] = last_message
+    for key, value in M.items():
+        conversations.append(value)
+    # 按照最后一条消息的时间戳倒序排列
+    conversations = sorted(conversations, key=lambda x: x.timestamp, reverse=True)
+
+    return render(request, 'chat_list.html', {'conversations': conversations})
+
+# views.py
+@login_required
+def chat_detail(request, user_id):
+    other_user = get_object_or_404(User, id=user_id)
+    messages = PrivateMessage.objects.filter(
+        models.Q(sender=request.user, receiver=other_user) |
+        models.Q(sender=other_user, receiver=request.user)
+    ).order_by('timestamp')
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            PrivateMessage.objects.create(sender=request.user, receiver=other_user, content=content)
+        return redirect('chat_detail', user_id=other_user.id)
+
+    return render(request, 'chat_detail.html', {'messages': messages, 'other_user': other_user})
