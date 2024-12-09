@@ -345,6 +345,7 @@
                 }
 
                 chatSocket.onmessage = function(e) {
+                    console.log("Hello");
                     const data = JSON.parse(e.data);
                     document.querySelector('#chat-log').innerHTML += message_template(data);
                     scrollToBottom();

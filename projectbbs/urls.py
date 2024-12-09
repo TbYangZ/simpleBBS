@@ -31,4 +31,12 @@ urlpatterns = [
     path('user/<int:user_id>/unfollow/', views.unfollow_user, name='unfollow_user'),
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
     path('post/<int:post_id>/edit/', views.edit_post, name='edit_post'),
+    path('send_message/', views.send_message, name='send_message'),
+    path('inbox/', views.inbox, name='inbox'),
+    path('message/<int:message_id>/', views.message_detail, name='message_detail'),
+    path('chat_room/', views.public_chat_room, name='public_chat_room'),
+    path('chat_room/<int:server_id>/', views.public_chat_room_in_server, name='public_chat_room_in_server'),
+    path('chat_room/<int:server_id>/<int:channel_id>/', views.channel, name='channel'),
+    path('chat/', views.chat_list, name='chat_list'),
+    path('chat/<int:user_id>/', views.chat_detail, name='chat_detail'),
 ]

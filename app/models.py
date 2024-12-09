@@ -5,8 +5,10 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-
-
+from django.db.models import Q
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 # Create your models here.
 
 
@@ -317,3 +319,18 @@ def get_channel_history(channel):
             'time': message.time.strftime('%Y-%m-%d %H:%M:%S'),
         })
     return history
+
+class PrivateMessage(models.Model):
+    sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='private_messages_sent'
+    )
+    receiver = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='private_messages_received'
+    )
+
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-timestamp']

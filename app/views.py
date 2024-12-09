@@ -1,15 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.db.models import Max
 
-from app.models import Post, UserBackend, Review, Follow, Messages, Blocks
+from app.models import *
 from app.models import User
 import markdown
-from app.forms import PostForm
+from app.forms import PostForm, MessageForm
 
 # Create your views here.
 
@@ -99,6 +100,8 @@ def post_detail(request, post_id):
 
 
 def user_main_page(request, user_id):
+    if not request.user.is_authenticated:
+        return render(request, 'login_required_page.html')
     user = User.objects.get(id=user_id)
     current_user = request.user
 
@@ -204,3 +207,143 @@ def edit_post(request, post_id):
         form = PostForm(instance=post)  # 在GET请求时，加载当前帖子的内容到表单
 
     return render(request, 'edit_post.html', {'form': form, 'post': post})
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.save()
+            return redirect('inbox')
+    else:
+        form = MessageForm()  # 为 GET 请求初始化表单
+    return render(request, 'send_message.html', {'form': form})
+
+@login_required
+def inbox(request):
+    messages = Messages.objects.filter(receiver=request.user).order_by('-time')
+    return render(request, 'inbox.html', {'messages': messages})
+
+@login_required
+def message_detail(request, message_id):
+    message = get_object_or_404(Messages, id=message_id, receiver=request.user)
+    rendered_content = markdown.markdown(message.content)
+    return render(request, 'message_detail.html', {'message': message, 'rendered_content': rendered_content})
+
+def public_chat_room(request):
+    if not request.user.is_authenticated:
+        return render(request, 'login_required_page.html')
+    # create a server or join a server
+    user = request.user
+    context = {}
+    if request.method == 'POST':
+        type_of_post = request.POST.get('type')
+        if type_of_post == 'create_server':
+            # create a server
+            name = request.POST.get('name')
+            server = create_server(server_name=name, owner=user)
+            return redirect('public_chat_room')
+        else:
+            # join a server
+            server_id = request.POST.get('addr')
+            err, msg = join_server(server_id, user)
+            if err == ERROR_SECRET_SERVER:
+                messages.error(request, "This is a secret server, you need a password to join")
+            elif err == ERROR_ALREADY_IN_SERVER:
+                messages.error(request, "You are already in this server")
+            elif err == ERROR_BLOCKED_BY_SERVER_OWNER:
+                messages.error(request, "You are blocked by the server owner")
+            elif err == SUCCESS:
+                pass
+            return redirect('public_chat_room')
+
+    context['server_list'] = get_server_list(user=user)
+    return render(request, 'public_chat_room.html', context=context)
+
+
+@login_required
+def public_chat_room_in_server(request, server_id):
+    if request.method == 'POST':
+        pass
+    user = request.user
+    context = {}
+    server = Server.objects.get(id=server_id)
+    context['server'] = server
+    context['channel_list'] = get_channels_from_server(server)
+    context['server_list'] = get_server_list(user=user)
+    return render(request, 'server.html', context)
+
+
+@login_required
+def channel(request, server_id, channel_id):
+    if request.method == 'POST':
+        pass
+    user = request.user
+    server = Server.objects.get(id=server_id)
+    channel = Channel.objects.get(id=channel_id)
+    history = get_channel_history(channel)
+    context = {
+        'server': server,
+        'user': user,
+        'channel': channel,
+        'channel_list': get_channels_from_server(server=server),
+        'server_list': get_server_list(user=user),
+        'history': history
+    }
+    return render(request, 'channel.html', context)
+
+@login_required
+def chat_list(request):
+    user = request.user
+
+    # 获取每个对话中最后一条消息的时间戳
+    latest_messages = (
+        PrivateMessage.objects.filter(
+            Q(sender=user) | Q(receiver=user)
+        )
+        .values('sender', 'receiver')
+        .annotate(latest_timestamp=Max('timestamp'))
+    )
+
+    # 获取每个对话的最后一条消息
+    conversations = []
+    M = {}
+    for msg in latest_messages:
+        last_message = PrivateMessage.objects.filter(
+            Q(sender=msg['sender'], receiver=user) | Q(sender=user, receiver=msg['receiver']),
+            timestamp=msg['latest_timestamp']
+        ).first()
+        sender_id = last_message.sender.id
+        receiver_id = last_message.receiver.id
+        user_id1 = min(sender_id, receiver_id)
+        user_id2 = max(sender_id, receiver_id)
+        mark = f"{user_id1}:{user_id2}"
+        if M.get(mark) is None:
+            M[mark] = last_message
+        elif M.get(mark).timestamp < last_message.timestamp:
+            M[mark] = last_message
+    for key, value in M.items():
+        conversations.append(value)
+    # 按照最后一条消息的时间戳倒序排列
+    conversations = sorted(conversations, key=lambda x: x.timestamp, reverse=True)
+
+    return render(request, 'chat_list.html', {'conversations': conversations})
+
+# views.py
+@login_required
+def chat_detail(request, user_id):
+    other_user = get_object_or_404(User, id=user_id)
+    messages = PrivateMessage.objects.filter(
+        models.Q(sender=request.user, receiver=other_user) |
+        models.Q(sender=other_user, receiver=request.user)
+    ).order_by('timestamp')
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            PrivateMessage.objects.create(sender=request.user, receiver=other_user, content=content)
+        return redirect('chat_detail', user_id=other_user.id)
+
+    return render(request, 'chat_detail.html', {'messages': messages, 'other_user': other_user})

@@ -374,6 +374,33 @@
         font-weight: bold;
     }
 
+    /* 发起对话按钮样式 */
+    .btn-primary {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        border-radius: 30px;
+        background: linear-gradient(145deg, #6200ea, #3700b3);
+        color: white;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 180px; /* 设置最小宽度 */
+        margin-top: 20px;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(145deg, #3700b3, #6200ea);
+        transform: translateY(-5px); /* 鼠标悬停时略微上移 */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* 增加阴影 */
+    }
+
+    .btn-primary:active {
+        transform: translateY(2px); /* 按钮点击时轻微下沉 */
+        box-shadow: none;
+    }
 </style>
 {% endblock %}
 
@@ -381,12 +408,13 @@
 <nav>
     <ul class="nav-list">
         <li><a href="{% url 'main_page' %}">主页</a></li>
-        <li><a href="#">公共聊天室</a></li>
+        <li><a href="{% url 'public_chat_room' %}">公共聊天室</a></li>
     </ul>
     <ul class="nav-list">
         {% if user.is_authenticated %}
-            <li><a href="{% url 'inbox' %}">收件箱</a></li>
-            <li><a href="{% url 'send_message' %}">发送私信</a></li>
+            <li><a href="{% url 'chat_list'%}">对话列表</a></li>
+{#            <li><a href="{% url 'inbox' %}">收件箱</a></li>#}
+{#            <li><a href="{% url 'send_message' %}">发送私信</a></li>#}
             <li><a href="{% url 'logout' %}">登出</a></li>
         {% else %}
             <li><a href="{% url 'login' %}">登录</a></li>
@@ -420,6 +448,8 @@
                 <span>{{ followees_count }}</span>
             </div>
         </div>
+
+        <a href="{% url 'chat_detail' user_id=user.id %}" class="btn-primary">发起对话</a>
 
         <!-- 显示关注的人 -->
         <div>
@@ -469,6 +499,14 @@
         </div>
     </div>
 </div>
+
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <p class="message {{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
 {% endblock %}
 
 {% block post_form %}

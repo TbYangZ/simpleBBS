@@ -1,0 +1,211 @@
+{% extends 'main_page.html' %}
+
+{% block title %}聊天详情{% endblock %}
+
+{% block style %}
+{{ block.super }} <!-- 保留父模板的样式 -->
+<style>
+    /* 聊天框样式 */
+    #chat-box {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 1rem;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .message {
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .message strong {
+        color: #6200ea;
+    }
+
+    .message small {
+        color: #666;
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .message.sent {
+        text-align: right;
+        background-color: #e0f7fa;
+    }
+
+    .message.received {
+        text-align: left;
+        background-color: #ede7f6;
+    }
+
+    /* 滚动条样式 */
+    #chat-box::-webkit-scrollbar {
+        width: 10px;
+    }
+    #chat-box::-webkit-scrollbar-thumb {
+        background-color: #6200ea;
+        border-radius: 10px;
+    }
+    #chat-box::-webkit-scrollbar-track {
+        background-color: #f4f4f9;
+    }
+
+    /* 表单样式 */
+    #chat-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    #chat-form textarea {
+        width: 100%;
+        height: 80px;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: none;
+    }
+
+    #chat-form button {
+        align-self: flex-end;
+        padding: 0.5rem 1rem;
+        background-color: #6200ea;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    #chat-form button:hover {
+        background-color: #3700b3;
+    }
+
+    /* 发送消息动画 */
+    .message {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+        #chat-box {
+            max-height: 300px;
+        }
+
+        #chat-form textarea {
+            height: 60px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 style="text-align: center;">与 {{ other_user.username }} 的对话</h2>
+
+<!-- 消息列表 -->
+<div id="chat-box">
+    {% for message in messages %}
+        <div class="message {% if message.sender == user %}sent{% else %}received{% endif %}">
+            <p>
+                {{ message.content }}
+            </p>
+            <small>{{ message.timestamp|date:"Y-m-d H:i" }}</small>
+        </div>
+    {% empty %}
+        <p style="text-align: center; color: #888;">没有消息。</p>
+    {% endfor %}
+</div>
+
+<!-- 发送消息的表单 -->
+<form id="chat-form" method="POST">
+    {% csrf_token %}
+    <textarea name="content" rows="3" placeholder="输入你的消息..." required></textarea>
+    <button type="submit">发送</button>
+</form>
+
+{% block post_form %}
+{% endblock %}
+
+{% block posts %}
+{% endblock %}
+
+<script>
+    // 创建 WebSocket 连接
+    const socket = new WebSocket(`ws://${window.location.host}/ws/chat/{{ user.id }}/{{ other_user.id }}/`);
+
+    // 连接成功时
+    socket.onopen = function() {
+        console.log('WebSocket 连接已建立');
+    };
+
+    // 接收到消息时
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const chatBox = document.getElementById('chat-box');
+
+        // 创建新消息元素
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(String(data.sender_id) === String({{ user.id }}) ? 'sent' : 'received');
+
+        messageDiv.innerHTML = `<strong>${data.sender_username}:</strong> ${data.content}<br><small>${data.timestamp}</small>`;
+        // 将新消息添加到聊天框
+        chatBox.appendChild(messageDiv);
+
+        // 滚动到聊天框底部
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    // 处理发送消息的表单提交
+    const form = document.getElementById('chat-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();  // 阻止表单提交
+
+        const content = form.querySelector('textarea').value;
+
+        if (content) {
+            const message = { content };
+            socket.send(JSON.stringify(message));
+
+            // 清空输入框
+            form.querySelector('textarea').value = '';
+        }
+    });
+
+    // 保证页面加载时，聊天框已经滚动到底部
+    window.onload = function() {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    // 监听 WebSocket 错误和关闭事件
+    socket.onerror = function(error) {
+        console.error("WebSocket 发生错误:", error);
+    };
+
+    socket.onclose = function(event) {
+        console.log('WebSocket 连接关闭:', event);
+        // 这里可以尝试重新连接
+    };
+</script>
+{% endblock %}

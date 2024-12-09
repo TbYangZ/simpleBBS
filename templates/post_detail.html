@@ -14,6 +14,16 @@
             color: #333;
             display: flex;
             flex-direction: column;
+        }
+
+        .main-body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
             align-items: center;
         }
 
@@ -29,19 +39,22 @@
         /* 导航栏样式 */
         nav {
             display: flex;
-            gap: 1rem;
-            padding: 1rem;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
             background-color: #3f51b5;
-            width: 100%;
-            justify-content: center;
         }
-
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
         nav a {
             color: #fff;
             text-decoration: none;
             font-weight: bold;
         }
-
         nav a:hover {
             text-decoration: underline;
         }
@@ -200,70 +213,71 @@
 </head>
 <body>
     <h1>论坛</h1>
-
     <!-- 导航栏 -->
     <nav>
-        <a href="{% url 'main_page' %}">主页</a>
-        <a href="#">公共聊天室</a>
+        <ul>
+            <li><a href="{% url 'main_page' %}">主页</a></li>
+            <li><a href="{% url 'public_chat_room' %}">公共聊天室</a></li>
+        </ul>
+        <ul>
+            {% if user.is_authenticated %}
+                <li>欢迎, {{ user.username }}</li>
+                <li><a href="{% url 'user_main_page' user.id %}">我的主页</a></li>
+                <li><a href="{% url 'chat_list'%}">对话列表</a></li>
+{#                <li><a href="{% url 'inbox' %}">收件箱</a></li>#}
+{#                <li><a href="{% url 'send_message'%}">发送私信</a></li>#}
+                <li><a href="{% url 'logout' %}">登出</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">登录</a></li>
+                <li><a href="{% url 'register' %}">注册</a></li>
+            {% endif %}
+        </ul>
     </nav>
 
-    <!-- 用户信息 -->
-    <div class="user-info">
-        {% if not user.is_authenticated %}
-            <a href="{% url 'login' %}">登录</a>
-            <a href="{% url 'register' %}">注册</a>
-        {% else %}
-            <span>欢迎, {{ user.username }}</span>
-            <a href="{% url 'logout' %}" class="logout-button">
-                <!-- 可加入图标 -->
-                <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 96 960 960" width="16"><path d="M468 936V684h300V504H468V288l-204 204 204 204z"></path></svg>
-                登出
-            </a>
+    <div class="main-body">
+        <!-- 帖子内容 -->
+        <div class="post">
+            <ul>
+                <!-- 为作者添加链接，点击后跳转到该作者的主页 -->
+                <li>作者: <a href="{% url 'user_main_page' post.author.id %}">{{ post.author.username }}</a></li>
+                <li>内容: <div class="post-content">{{ post.content|safe }}</div></li> <!-- 使用 safe 来渲染 HTML -->
+                <li>创建于: {{ post.created_at|date:"Y-m-d H:i" }}</li>
+            </ul>
+        </div>
+
+        <div class="post-actions">
+            {% if user == post.author or user.is_staff %}
+                <a href="{% url 'edit_post' post.id %}" class="action-button edit">
+                    修改帖子
+                </a>
+            {% endif %}
+            {% if user == post.author or user.is_staff %}
+                <a href="{% url 'delete_post' post.id %}" class="action-button delete">
+                    删除帖子
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- 评论列表 -->
+        <div class="comments">
+            <h2>评论</h2>
+            <ul>
+                {% for review, review_username in reviews %}
+                    <li>
+                        <strong><a href="{% url 'user_main_page' review.id %}">{{ review_username }}</a></strong>: {{ review.content }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- 评论表单 -->
+        {% if user.is_authenticated %}
+            <form method="post" class="comment-form">
+                {% csrf_token %}
+                <textarea name="content" placeholder="写下你的评论..." required></textarea>
+                <button type="submit">提交评论</button>
+            </form>
         {% endif %}
     </div>
-
-    <!-- 帖子内容 -->
-    <div class="post">
-        <ul>
-            <!-- 为作者添加链接，点击后跳转到该作者的主页 -->
-            <li>作者: <a href="{% url 'user_main_page' post.author.id %}">{{ post.author.username }}</a></li>
-            <li>内容: <div class="post-content">{{ post.content|safe }}</div></li> <!-- 使用 safe 来渲染 HTML -->
-            <li>创建于: {{ post.created_at|date:"Y-m-d H:i" }}</li>
-        </ul>
-    </div>
-
-    <div class="post-actions">
-        {% if user == post.author or user.is_staff %}
-            <a href="{% url 'edit_post' post.id %}" class="action-button edit">
-                修改帖子
-            </a>
-        {% endif %}
-        {% if user == post.author or user.is_staff %}
-            <a href="{% url 'delete_post' post.id %}" class="action-button delete">
-                删除帖子
-            </a>
-        {% endif %}
-    </div>
-
-    <!-- 评论列表 -->
-    <div class="comments">
-        <h2>评论</h2>
-        <ul>
-            {% for review, review_username in reviews %}
-                <li>
-                    <strong><a href="{% url 'user_main_page' review.id %}">{{ review_username }}</a></strong>: {{ review.content }}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <!-- 评论表单 -->
-    {% if user.is_authenticated %}
-        <form method="post" class="comment-form">
-            {% csrf_token %}
-            <textarea name="content" placeholder="写下你的评论..." required></textarea>
-            <button type="submit">提交评论</button>
-        </form>
-    {% endif %}
 </body>
 </html>
