@@ -1,0 +1,11 @@
+{% extends 'admin_page.html' %}
+{% block title %}仪表盘{% endblock %}
+{% block content %}
+<h2>欢迎来到后台管理系统</h2>
+<div class="stats">
+    <div>总用户数: {{ user_count }}</div>
+    <div>总帖子数: {{ post_count }}</div>
+    <div>总评论数: {{ comment_count }}</div>
+    <div>服务器数量: {{ server_count }}</div>
+</div>
+{% endblock %}

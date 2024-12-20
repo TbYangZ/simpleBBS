@@ -1,0 +1,116 @@
+{% extends 'admin_page.html' %}
+{% block title %}用户管理{% endblock %}
+{% block content %}
+<h2>用户管理</h2>
+<form method="GET" class="search-form">
+    <input type="text" name="query_user_name" placeholder="搜索用户名" class="search-input">
+    
+    <label for="start_time">开始时间:</label>
+    <input type="date" id="start_time" name="start_time" class="date-input">
+
+    <label for="end_time">结束时间:</label>
+    <input type="date" id="end_time" name="end_time" class="date-input">
+    
+    <button type="submit" class="btn btn-search">搜索</button>
+    <button type="reset" class="btn btn-reset" onclick="window.location.href='{% url 'admin_user' %}';">重置</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>用户名</th>
+            <th>邮箱</th>
+            <th>注册时间</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.date_joined }}</td>
+            <td>
+                <!-- 删除按钮 -->
+                <form method="POST" action="{% url 'admin_delete_user' user.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-delete">删除</button>
+                </form>
+                <!-- 修改按钮 -->
+                <button class="btn btn-edit edit-btn" data-id="{{ user.id }}" data-username="{{ user.username }}" data-email="{{ user.email }}">
+                    修改
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!-- 修改弹出框 -->
+<div id="edit-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>修改用户信息</h3>
+        <form id="edit-form" method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" id="user-id" name="user_id">
+            <label for="username">用户名:</label>
+            <input type="text" id="username" name="username"><br>
+            <label for="email">邮箱:</label>
+            <input type="email" id="email" name="email"><br>
+            <label for="password">新密码 (可选):</label>
+            <input type="password" id="password" name="password"><br>
+            <!-- 提交和取消按钮 -->
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-submit">提交</button>
+                <button type="button" id="cancel-btn" class="btn btn-cancel">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+const modal = document.getElementById('edit-modal');
+const closeModalBtn = document.querySelector('.close-btn');
+const cancelBtn = document.getElementById('cancel-btn');
+const editButtons = document.querySelectorAll('.edit-btn');
+const userIdInput = document.getElementById('user-id');
+const usernameInput = document.getElementById('username');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const editForm = document.getElementById('edit-form');
+
+// 显示弹出框
+editButtons.forEach(button => {
+    button.addEventListener('click', function () {
+        const userId = this.dataset.id;
+        const username = this.dataset.username;
+        const email = this.dataset.email;
+
+        // 填充表单数据
+        userIdInput.value = userId;
+        usernameInput.value = username;
+        emailInput.value = email;
+
+        // 设置表单提交路径
+        editForm.action = `/admin/edit_user/${userId}/`;
+
+        modal.style.display = 'flex';
+    });
+});
+
+// 隐藏弹出框
+function closeModal() {
+    modal.style.display = 'none';
+    passwordInput.value = ''; // 清空密码输入框
+}
+
+closeModalBtn.addEventListener('click', closeModal);
+cancelBtn.addEventListener('click', closeModal);
+
+// 点击外部隐藏弹出框
+window.addEventListener('click', function (e) {
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+</script>
+    
+{% endblock %}

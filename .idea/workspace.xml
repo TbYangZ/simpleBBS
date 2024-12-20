@@ -4,18 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="64c47aea-b5de-4416-a690-dc7076cf03b3" name="更改" comment="demo">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="64c47aea-b5de-4416-a690-dc7076cf03b3" name="更改" comment="demo 2024/12/20 21:41">
+      <change afterPath="$PROJECT_DIR$/templates/admin_dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin_page.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin_post.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin_review.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin_user.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projectbbs/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/channel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/channel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/chat_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/chat_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/projectbbs/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/projectbbs/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/chat_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/chat_list.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/main_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/main_page.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/post_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/post_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/public_chat_room.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/public_chat_room.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/server.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/server.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,36 +67,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Django Server.projectbbs.executor": "Debug",
-    "Django 服务器.projectbbs.executor": "Run",
-    "Python.daphne.executor": "Run",
-    "Python.manage.executor": "Debug",
-    "Python.manage_test.executor": "Debug",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.pycharm.django.structure.promotion.once.per.project": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "django.template.preview.state": "SHOW_EDITOR",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/workspace/projectbbs/.venv/Scripts/daphne.exe",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "http.certificates",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Django Server.projectbbs.executor&quot;: &quot;Debug&quot;,
+    &quot;Django 服务器.projectbbs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.daphne.executor&quot;: &quot;Run&quot;,
+    &quot;Python.manage.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.manage_test.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.pycharm.django.structure.promotion.once.per.project&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/workspace/projectbbs/.venv/Scripts/daphne.exe&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;http.certificates&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Python.daphne">
     <configuration name="daphne" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="projectbbs" />
@@ -218,6 +218,11 @@
       <workItem from="1731845845120" duration="11822000" />
       <workItem from="1732006396795" duration="5545000" />
       <workItem from="1732610814288" duration="329000" />
+      <workItem from="1733823253469" duration="871000" />
+      <workItem from="1733996398441" duration="4601000" />
+      <workItem from="1734337640877" duration="12826000" />
+      <workItem from="1734612798497" duration="11000" />
+      <workItem from="1734693500104" duration="1596000" />
     </task>
     <task id="LOCAL-00001" summary="demo">
       <option name="closed" value="true" />
@@ -259,7 +264,31 @@
       <option name="project" value="LOCAL" />
       <updated>1731403365715</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="demo 2024/12/09 17:53">
+      <option name="closed" value="true" />
+      <created>1733737990189</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1733737990189</updated>
+    </task>
+    <task id="LOCAL-00007" summary="demo 2024/12/09 17:53">
+      <option name="closed" value="true" />
+      <created>1733737999986</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1733737999986</updated>
+    </task>
+    <task id="LOCAL-00008" summary="demo 2024/12/09 17:53">
+      <option name="closed" value="true" />
+      <created>1733752412220</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1733752412220</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -305,11 +334,14 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="demo" />
+    <MESSAGE value="Merge branch 'refs/heads/beautify'&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml&#10;#&#9;app/views.py&#10;#&#9;projectbbs/urls.py" />
     <MESSAGE value="demo 2024/12/09" />
-    <option name="LAST_COMMIT_MESSAGE" value="demo 2024/12/09" />
+    <MESSAGE value="demo 2024/12/09 17:53" />
+    <MESSAGE value="demo 2024/12/20 21:41" />
+    <option name="LAST_COMMIT_MESSAGE" value="demo 2024/12/20 21:41" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/projectbbs$daphne.coverage" NAME="daphne 覆盖结果" MODIFIED="1733737805825" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/projectbbs$daphne.coverage" NAME="daphne 覆盖结果" MODIFIED="1734349614456" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/projectbbs$manage_test.coverage" NAME="manage_test 覆盖结果" MODIFIED="1731313051385" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/simpleBBS$daphne.coverage" NAME="daphne Coverage Results" MODIFIED="1733499761654" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/projectbbs$manage.coverage" NAME="manage 覆盖结果" MODIFIED="1730303029103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

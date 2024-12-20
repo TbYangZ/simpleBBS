@@ -1,0 +1,44 @@
+{% extends 'admin_page.html' %}
+{% block title %}帖子管理{% endblock %}
+{% block content %}
+<h2>帖子管理</h2>
+<form method="GET" class="search-form">
+    <input type="text" name="query_post_author" placeholder="搜索作者" class="search-input">
+    <input type="text" name="query_post_content" placeholder="搜索帖子" class="search-input">
+
+    <label for="start_time">开始时间:</label>
+    <input type="date" id="start_time" name="start_time" class="date-input">
+
+    <label for="end_time">结束时间:</label>
+    <input type="date" id="end_time" name="end_time" class="date-input">
+
+    <button type="submit" class="btn btn-search">搜索</button>
+    <button type="reset" class="btn btn-reset" onclick="window.location.href='{% url 'admin_post' %}';">重置</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>作者</th>
+            <th>发布时间</th>
+            <th>内容</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for post in posts %}
+        <tr>
+            <td> <a href="{% url 'user_main_page' post.author.id %}">{{ post.author.username }}</a> </td>
+            <td>{{ post.created_at }}</td>
+            <td>{{ post.content | truncatechars:50 }}...</td>
+            <td>
+                <form method="POST" action="{% url 'admin_delete_post' post.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-delete">删除</button>
+                </form>
+                <button class="btn btn-detail" onclick="window.location.href='{% url 'post_detail' post.id %}';">详情</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

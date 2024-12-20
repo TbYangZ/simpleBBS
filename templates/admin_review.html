@@ -1,0 +1,42 @@
+{% extends 'admin_page.html' %}
+{% block title %}评论管理{% endblock %}
+{% block content %}
+<h2>评论管理</h2>
+<form method="GET" class="search-form">
+    <input type="text" name="query_user_name" placeholder="搜索用户评论" class="search-input">
+
+    <label for="start_time">开始时间:</label>
+    <input type="date" id="start_time" name="start_time" class="date-input">
+
+    <label for="end_time">结束时间:</label>
+    <input type="date" id="end_time" name="end_time" class="date-input">
+
+    <button type="submit" class="btn btn-search">搜索</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>用户</th>
+            <th>发布时间</th>
+            <th>内容</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+        <tr>
+            <td>{{ review.user.username }}</td>
+            <td>{{ review.created_at }}</td>
+            <td>{{ review.content | truncatechars:50 }}</td>
+            <td>
+                <form method="POST" action="#">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-delete">删除</button>
+                </form>
+                <button class="btn btn-detail" onclick="window.location.href='{% url 'post_detail' review.post.id %}'">详情</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

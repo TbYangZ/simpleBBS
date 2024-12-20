@@ -20,7 +20,6 @@ from django.urls import path, include
 from app import views, consumers
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.post_list, name='main_page'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
@@ -42,4 +41,12 @@ urlpatterns = [
     path('chat_room/<int:server_id>/<int:channel_id>/', views.channel, name='channel'),
     path('chat/', views.chat_list, name='chat_list'),
     path('chat/<int:user_id>/', views.chat_detail, name='chat_detail'),
+    path('admin/', views.admin_dashboard, name='admin'),
+    path('admin/dashboard', views.admin_dashboard, name='admin_dashboard'),
+    path('admin/user', views.admin_user, name='admin_user'),
+    path('admin/edit_user/<int:user_id>/', views.admin_edit_user, name='admin_edit_user'),
+    path('admin/delete_user/<int:user_id>/', views.admin_delete_user, name='admin_delete_user'),
+    path('admin/post', views.admin_post, name='admin_post'),
+    path('admin/delete_post/<int:post_id>/', views.admin_delete_post, name='admin_delete_post'),
+    path('admin/review/', views.admin_review, name='admin_review'),
 ]

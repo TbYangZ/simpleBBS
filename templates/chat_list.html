@@ -83,10 +83,10 @@
         {% for conversation in conversations %}
             <div class="conversation-item">
                 <div>
-                    <h3><a href="{% url 'chat_detail' user_id=conversation.sender.id %}">与 {{ conversation.sender.username }} 的对话</a></h3>
+                    <h3><a href="{% url 'chat_detail' user_id=conversation.target.id %}">与 {{ conversation.target.username }} 的对话</a></h3>
                     <p>最新消息: {{ conversation.content|truncatechars:50 }}</p>
                 </div>
-                <small>{{ conversation.timestamp|date:"Y-m-d H:i" }}</small>
+                <small>{{ conversation.timestamp }}</small>
             </div>
         {% empty %}
             <p style="text-align: center;">没有私信。</p>

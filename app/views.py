@@ -1,3 +1,4 @@
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from django.contrib import messages
@@ -17,6 +18,7 @@ from app.forms import PostForm, MessageForm
 
 # Create your views here.
 
+
 def index(request):
     return HttpResponse('Hello, Django!')
 
@@ -26,7 +28,19 @@ def post_list(request):
         content = request.POST['content']
         Post.objects.create(author=request.user, content=content)
         return redirect('main_page')
+    search_content = request.GET.get('search_content', '')
     posts = Post.objects.all()
+    if search_content:
+        posts = posts.filter(Q(content__icontains=search_content) | Q(author__username__icontains=search_content))
+
+    start_time = request.GET.get('start_time', '')
+    if start_time:
+        posts = posts.filter(created_at__gte=start_time)
+
+    end_time = request.GET.get('end_time', '')
+    if end_time:
+        posts = posts.filter(created_at__lte=end_time)
+
     simplified_posts = []
     for post in posts:
         post.content = post.content[:20]
@@ -44,12 +58,139 @@ def login_view(request):
         user = authenticate(request=request, username=username, password=password)
         if user is not None:
             login(request, user)
-            print(user.is_authenticated)
+            print(user.is_superuser)
             return redirect('main_page')
         else:
             messages.error(request, '用户名或密码错误')
             return redirect('login')
     return render(request, 'login_page.html')
+
+
+@login_required
+def admin_view(request):
+    user = request.user
+    if not user.is_superuser:
+        return HttpResponseForbidden()
+    if request.method == 'POST':
+        username = request.POST['username']
+        user = User.objects.get(username=username)
+        user.is_active = False
+        user.save()
+        return redirect('admin_page')
+    users = User.objects.all()
+    posts = Post.objects.all()
+    servers = Server.objects.all()
+    channels = {
+        server: get_channels_from_server(server)
+        for server in servers
+    }
+    context = {
+        'users': users,
+        'posts': posts,
+    }
+    return render(request, 'admin_page.html')
+
+
+@login_required
+def admin_dashboard(request):
+    context = {
+        'user_count': User.objects.count(),
+        'post_count': Post.objects.count(),
+        'comment_count': Review.objects.count(),
+        'server_count': Server.objects.count(),
+    }
+    return render(request, 'admin_dashboard.html', context)
+
+
+@login_required
+def admin_user(request):
+    query = request.GET.get('query_user_name', '')
+    users = User.objects.filter(username__icontains=query, is_superuser=False)
+
+    date_start = request.GET.get('start_time', '')
+    if date_start:
+        users = users.filter(date_joined__gte=date_start)
+
+    date_end = request.GET.get('end_time', '')
+    if date_end:
+        users = users.filter(date_joined__lte=date_end)
+
+    for user in users:
+        user.date_joined = localtime(user.date_joined, ZoneInfo("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M')
+    return render(request, 'admin_user.html', {'users': users})
+
+
+def admin_delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    messages.success(request, f"用户 {user.username} 已删除！")
+    return redirect('admin_user')
+
+
+def admin_edit_user(request, user_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password', '')
+
+        # 更新用户信息
+        user.username = username
+        user.email = email
+        if password:
+            user.set_password(password)  # 更新密码
+        user.save()
+
+        messages.success(request, f"用户 {username} 信息已更新！")
+        return redirect('admin_user')
+    return redirect('admin_user')
+
+
+def admin_post(request):
+    query_post_author = request.GET.get('query_post_author', '')
+    query_post_content = request.GET.get('query_post_content', '')
+    start_time = request.GET.get('start_time')
+    end_time = request.GET.get('end_time')
+
+    # 基本的筛选条件
+    posts = Post.objects.all()
+    if query_post_author:
+        posts = posts.filter(author__username__icontains=query_post_author)
+    if query_post_content:
+        posts = posts.filter(content__icontains=query_post_content)
+
+    # 根据时间筛选
+    if start_time:
+        start_datetime = datetime.strptime(start_time, '%Y-%m-%d')
+        posts = posts.filter(created_at__gte=start_datetime)
+    if end_time:
+        end_datetime = datetime.strptime(end_time, '%Y-%m-%d')
+        posts = posts.filter(created_at__lte=end_datetime)
+
+    for post in posts:
+        post.created_at = localtime(post.created_at, ZoneInfo("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M')
+
+    return render(request, 'admin_post.html', {'posts': posts})
+
+
+def admin_delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post.delete()
+    messages.success(request, f"帖子已删除！")
+    return redirect('admin_post')
+
+
+def admin_review(request):
+    query_user_name = request.GET.get('query_user_name', '')
+    reviews = Review.objects.all()
+
+    if query_user_name:
+        reviews = reviews.filter(user__username__icontains=query_user_name)
+
+    for review in reviews:
+        review.created_at = localtime(review.created_at, ZoneInfo("Asia/Shanghai")).strftime('%Y-%m-%d %H:%M')
+
+    return render(request, 'admin_review.html', {'reviews': reviews})
 
 
 def logout_view(request):
@@ -408,15 +549,23 @@ def chat_list(request):
         receiver_id = last_message.receiver.id
         user_id1 = min(sender_id, receiver_id)
         user_id2 = max(sender_id, receiver_id)
+        print(user_id1, user_id2)
         mark = f"{user_id1}:{user_id2}"
+        last_message = {
+            'content': last_message.content,
+            'target': last_message.receiver if last_message.sender == user else last_message.sender,
+            'sender': last_message.sender,
+            'receiver': last_message.receiver,
+            'timestamp': localtime(last_message.timestamp, ZoneInfo('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M')
+        }
         if M.get(mark) is None:
             M[mark] = last_message
-        elif M.get(mark).timestamp < last_message.timestamp:
+        elif M.get(mark)['timestamp'] < last_message['timestamp']:
             M[mark] = last_message
     for key, value in M.items():
         conversations.append(value)
     # 按照最后一条消息的时间戳倒序排列
-    conversations = sorted(conversations, key=lambda x: x.timestamp, reverse=True)
+    conversations = sorted(conversations, key=lambda x: x['timestamp'], reverse=True)
 
     return render(request, 'chat_list.html', {'conversations': conversations})
 

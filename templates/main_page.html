@@ -139,6 +139,73 @@
             background-color: #d4edda;
             color: #155724;
         }
+
+        /* 搜索表单整体样式 */
+        .search-form {
+            display: flex;
+            flex-wrap: wrap; /* 响应式布局 */
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+        /* 搜索框样式 */
+        .search-input {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc; /* 边框颜色 */
+            border-radius: 5px;
+            width: 200px; /* 固定宽度 */
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* 搜索框聚焦时的样式 */
+        .search-input:focus {
+            border-color: #007BFF; /* 蓝色边框 */
+            outline: none; /* 去除默认聚焦样式 */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 聚焦时的阴影效果 */
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+        /* 按钮容器样式 */
+        .form-buttons {
+            margin-top: 15px;
+            text-align: center; /* 居中对齐 */
+        }
+
+        .btn-search {
+            background-color: #007BFF; /* 蓝色 */
+        }
+
+        .btn-search:hover {
+            background-color: #0056b3; /* 深蓝色 */
+            transform: scale(1.05); /* 鼠标悬停时略微放大 */
+        }
+        /* 时间筛选器的输入框样式 */
+        .date-input {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 160px;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        /* 聚焦时的效果 */
+        .date-input:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
     </style>
     {% endblock %}
 </head>
@@ -154,6 +221,9 @@
         <ul>
             {% if user.is_authenticated %}
                 <li>欢迎, {{ user.username }}</li>
+                {% if user.is_superuser %}
+                    <li><a href="{% url 'admin_dashboard' %}">后台管理</a></li>
+                {% endif %}
                 <li><a href="{% url 'user_main_page' user.id %}">我的主页</a></li>
                 <li><a href="{% url 'chat_list'%}">对话列表</a></li>
 {#                <li><a href="{% url 'inbox' %}">收件箱</a></li>#}
@@ -177,6 +247,17 @@
                 {% endfor %}
             </div>
         {% endif %}
+
+        <form method="GET" class="search-form">
+            <input type="text" name="search_content" placeholder="搜索帖子" class="search-input">
+    
+            <label for="start_time">开始时间:</label>
+            <input type="date" id="start_time" name="start_time" class="date-input">
+        
+            <label for="end_time">结束时间:</label>
+            <input type="date" id="end_time" name="end_time" class="date-input">
+            <button type="submit" class="btn btn-search">搜索</button>
+        </form>
     {% endblock %}
 
     <!-- 发布帖子表单 -->
